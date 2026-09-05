@@ -94,9 +94,46 @@ struct224 *func_151D2F00(void *arg0, s32 arg1, u8 arg2, struct224 *arg3) {
     return tmp;
 }
 
+#define S_U8(ptr, offset)  (*(u8*)((u8*)(ptr) + (offset)))
+#define S_S8(ptr, offset)  (*(s8*)((u8*)(ptr) + (offset)))
+#define S_S16(ptr, offset) (*(s16*)((u8*)(ptr) + (offset)))
+#define S_S32(ptr, offset) (*(s32*)((u8*)(ptr) + (offset)))
+#define S_U32(ptr, offset) (*(u32*)((u8*)(ptr) + (offset)))
+#define S_PTR(ptr, offset) (*(void**)((u8*)(ptr) + (offset)))
+
 #pragma GLOBAL_ASM("asm/nonmatchings/game_1FFF60/func_151D2F90.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/game_1FFF60/func_151D3130.s")
+extern void (*D_8008FC5C[])(struct102 *);
+extern void func_1514EDF0(struct102 *, void *);
+
+void func_151D3130(struct102 *arg0) {
+    struct224 *curr;
+    struct224 *next;
+    void (*func)(struct102 *);
+    u32 neg_one;
+
+    func = D_8008FC5C[S_U8(arg0, 0x1D)];
+    if (func != NULL) {
+        func(arg0);
+    }
+
+    neg_one = -1;
+    curr = (struct224 *)S_PTR(arg0, 0x24);
+    if (curr != NULL) {
+        do {
+            s8 unk2A = S_S8(curr, 0x2A);
+            next = curr->unk40;
+            if (neg_one != unk2A) {
+                D_8008FC48[unk2A](curr, (struct_12b *)&curr->unk34);
+            }
+            S_S32(curr, 0x2C) = 0;
+            func_1516972C(curr);
+            curr = next;
+        } while (curr != NULL);
+    }
+
+    func_1514EDF0(arg0, S_PTR(arg0, 0x10));
+}
 
 void func_151D31F4(struct102 *arg0) {
     func_151D3130(arg0);
