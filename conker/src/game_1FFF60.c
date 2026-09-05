@@ -44,11 +44,70 @@ struct224 *func_151D2BA4(s32 arg0, struct00 *arg1, s32 arg2, u8 arg3, s32 arg4) 
     return tmp;
 }
 
+#define S_U8(ptr, offset)  (*(u8*)((u8*)(ptr) + (offset)))
+#define S_S8(ptr, offset)  (*(s8*)((u8*)(ptr) + (offset)))
+#define S_S16(ptr, offset) (*(s16*)((u8*)(ptr) + (offset)))
+#define S_S32(ptr, offset) (*(s32*)((u8*)(ptr) + (offset)))
+#define S_U32(ptr, offset) (*(u32*)((u8*)(ptr) + (offset)))
+#define S_PTR(ptr, offset) (*(void**)((u8*)(ptr) + (offset)))
+
 extern void (*D_8008FC48[])(struct224*, struct_12b*);
-extern void (*D_8008FC40[])(struct224*, struct_12b*);
+extern s32 (*D_8008FC40[])(struct224*, struct_12b*);
 extern void func_15143134(void*, void*, void*);
 
-#pragma GLOBAL_ASM("asm/nonmatchings/game_1FFF60/func_151D2C40.s")
+typedef struct {
+    u8 pad0[0x10];
+    void *unk10;
+    u8 unk14;
+    u8 pad15[0xB];
+    s16 unk20;
+    u8 pad22[0x2];
+    u8 unk24;
+    u8 unk25;
+    s16 unk26;
+    u8 unk28;
+    s8 unk29;
+    s8 unk2A;
+    u8 pad2B;
+    s32 unk2C;
+    void *unk30;
+    struct_12b unk34;
+} struct_1FFF60_node;
+
+void func_151D2C40(struct_1FFF60_node *arg0) {
+    void *temp_v0;
+    struct_12b sp28;
+    void *temp_v1;
+
+    temp_v0 = arg0->unk10;
+    if (S_U32(temp_v0, 0) == 0 || S_U8(temp_v0, 4) == 0xFF || arg0->unk14 != S_U8(temp_v0, 0x3B) || (temp_v1 = S_PTR(temp_v0, 0x1D4)) == 0 || (S_U8(temp_v0, 0x74) & 0xF) == 0xF) {
+        func_1516972C((struct224 *)arg0);
+        return;
+    }
+
+    func_15143134((u8 *)arg0 + 0x18, &sp28, (u8 *)temp_v1 + (arg0->unk24 << 6));
+
+    if (arg0->unk28 & 1) {
+        arg0->unk26 -= D_800BE9E4;
+        if (arg0->unk26 < 0) {
+            if (arg0->unk2A != -1) {
+                D_8008FC48[arg0->unk2A]((struct224 *)arg0, &sp28);
+            }
+            arg0->unk2C = 0;
+            func_1516972C((struct224 *)arg0);
+            return;
+        }
+    }
+
+    if (arg0->unk29 != -1) {
+        if (D_8008FC40[arg0->unk29]((struct224 *)arg0, &sp28) == 0) {
+            func_1516972C((struct224 *)arg0);
+            return;
+        }
+    }
+
+    arg0->unk34 = sp28;
+}
 
 void func_151D2DAC(struct102 *arg0) {
     func_151D3354(arg0);
@@ -93,14 +152,6 @@ struct224 *func_151D2F00(void *arg0, s32 arg1, u8 arg2, struct224 *arg3) {
     
     return tmp;
 }
-
-#define S_U8(ptr, offset)  (*(u8*)((u8*)(ptr) + (offset)))
-#define S_S8(ptr, offset)  (*(s8*)((u8*)(ptr) + (offset)))
-#define S_S16(ptr, offset) (*(s16*)((u8*)(ptr) + (offset)))
-#define S_S32(ptr, offset) (*(s32*)((u8*)(ptr) + (offset)))
-#define S_U32(ptr, offset) (*(u32*)((u8*)(ptr) + (offset)))
-#define S_PTR(ptr, offset) (*(void**)((u8*)(ptr) + (offset)))
-
 #pragma GLOBAL_ASM("asm/nonmatchings/game_1FFF60/func_151D2F90.s")
 
 extern void (*D_8008FC5C[])(struct102 *);
