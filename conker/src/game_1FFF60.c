@@ -29,6 +29,7 @@ void func_151D2B4C(s32 arg0) {
 typedef struct { s32 a[9]; } struct_36b;
 s32 func_15167A68(s32, s32, s32, s32, s32, s32);
 typedef struct { s32 a[3]; } struct_12b;
+typedef struct { s32 a[1]; } struct_4b;
 struct224 *func_151D2BA4(s32 arg0, struct00 *arg1, s32 arg2, u8 arg3, s32 arg4) {
     struct224 *tmp = func_15167A68(0x3D, arg4, arg2 + 0x48, 1, arg3, 1);
 
@@ -262,9 +263,8 @@ void func_151D33FC(struct224 *arg0, struct223 *arg1) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/game_1FFF60/func_151D343C.s")
-// NON-MATCHING: ops in wrong order
-// void func_151D343C(s32 arg0, u8 arg1) {
-//     s32 sp1C[1] = D_800AB168;
-//     func_15169260(sp1C, 1, arg0, arg1);
-// }
+void func_151D343C(s32 arg0, u8 arg1) {
+    struct_4b sp1C;
+    sp1C = *(struct_4b *)D_800AB168;
+    func_15169260(&sp1C, 1, arg0, arg1);
+}
