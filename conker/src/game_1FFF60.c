@@ -136,7 +136,42 @@ void func_151D2E14(struct102 *arg0) {
     func_15169824(tmp);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/game_1FFF60/func_151D2E5C.s")
+void func_151D2E5C(struct224 *arg0, struct223 *arg1, u8 arg2) {
+    s32 *new_var;
+
+    if (arg2 == 0) {
+        s32 tmp0;
+        s32 tmp1;
+        s32 tmp2;
+        s32 tmp3;
+
+        tmp0 = arg0->unk10;
+        tmp1 = arg0->unk14;
+        tmp2 = arg1->unk4.ub;
+        tmp3 = arg1->unk0;
+        if ((tmp0 == tmp3) || (tmp2 == tmp1)) {
+            func_1516972C(arg0);
+        }
+        return;
+    }
+    new_var = &arg0->unk10;
+    if (arg2 != 0x2D) {
+        return;
+    }
+    {
+        s32 unk0 = arg1->unk0;
+
+        if (unk0 == (*new_var)) {
+            arg0->unk10 = arg1->unk4.w;
+            arg0->unk14 = arg1->unk9;
+            return;
+        }
+        if (arg1->unk4.w == (*new_var)) {
+            arg0->unk10 = unk0;
+            arg0->unk14 = arg1->unk8;
+        }
+    }
+}
 
 struct224 *func_151D2F00(void *arg0, s32 arg1, u8 arg2, struct224 *arg3) {
     struct224 *tmp = func_15167A68(0x3E, arg3, arg1 + 0x30, 1, arg2, 1);
