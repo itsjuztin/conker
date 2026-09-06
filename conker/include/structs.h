@@ -2821,7 +2821,11 @@ typedef struct {
 } struct246;
 
 typedef struct {
-    u8 pad0[0x760];
+    u8 pad[0xEC];
+} struct247_sub;
+
+typedef struct {
+    struct247_sub unk0[8];
 } struct247; // maybe naudio?
 
 typedef struct {

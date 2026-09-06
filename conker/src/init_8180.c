@@ -3,7 +3,11 @@
 #include "macros.h"
 
 typedef struct {
-  u8 pad0[0x760];
+    u8 pad[0xEC];
+} struct247_sub;
+
+typedef struct {
+    struct247_sub unk0[8];
 } struct247; // something naudio related?
 
 extern N_ALCSPlayer *D_8003C900[];
@@ -24,6 +28,7 @@ void func_10017D80(N_ALCSPlayer *arg0, u8 arg1, u8 arg2);
 void func_10017DF0(N_ALCSPlayer *csp, f32 arg1, f32 arg2);
 void func_10017E4C(N_ALCSPlayer *csp, u8 chan, u8 arg2);
 void func_10017F10(N_ALCSPlayer *arg0, u8 arg1, u8 arg2, u8 arg3, s32 arg4);
+void func_100186DC(void *arg0, void *arg1);
 void func_10018790(N_ALCSPlayer *arg0, s32 arg1, u32 arg2, u32 arg3);
 void func_10018D00(N_ALCSPlayer *arg0, s16 arg1);
 void func_10018D50(N_ALCSPlayer *seqp);
@@ -170,11 +175,9 @@ void func_10008C04(u8 idx, u8 arg1, s32 arg2) {
     func_10018790(&D_8003CA58[idx], &D_8003CD48[idx], arg1, arg2);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/init_8180/func_10008C6C.s")
-// NON-MATCHING: need to determine what these variables hold
-// void func_10008C6C(u8 idx, u8 arg1) {
-//     func_100186DC(&D_8003CA58[idx], &D_8003CD48[idx + (arg1 * 0xEC)]); // (idx * 0x760)
-// }
+void func_10008C6C(u8 idx, u8 arg1) {
+    func_100186DC(&D_8003CA58[idx], &D_8003CD48[idx].unk0[arg1]);
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/init_8180/func_10008CE8.s")
 // NON-MATCHING: 80% of the way there

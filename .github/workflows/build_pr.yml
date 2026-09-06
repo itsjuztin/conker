@@ -6,7 +6,7 @@ on:
 
 jobs:
   build_pr:
-    if: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
+    if: ${{ github.repository == 'mkst/conker' && github.event.pull_request.head.repo.full_name != github.repository }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout this repo
