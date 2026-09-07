@@ -868,9 +868,9 @@ void func_10003330(struct00 *arg0);
 //func_100034E0
 //func_10003658
 // void func_100038C0(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-// void func_100038E0(void);
+s32 func_100038E0(void);
 void func_10003920(void);
-// void func_10003BD0(void);
+void func_10003BD0(void);
 //func_10003ACC
 s32 func_10003C6C(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 //func_10004074

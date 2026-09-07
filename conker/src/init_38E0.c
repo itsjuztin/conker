@@ -4,14 +4,24 @@
 #include "variables.h"
 
 
-#pragma GLOBAL_ASM("asm/nonmatchings/init_38E0/func_100038E0.s")
-// NON-MATCHING: wtf is this
-// s32 func_100038E0(void) {
-//     D_80038070 = 0xBC000C02; // -0.007815362885594368 ?
-//     D_80038074 = (u16)0x4040;
-//     D_BC000C02 = (u16)0x4040;
-//     return 0xBC000C02;
-// }
+s32 func_100038E0(void) {
+    int val;
+    u16 *ptr;
+    u16 *ptr2;
+    s32 addr;
+
+    addr = 0xBC000C02;
+    do {
+        D_80038070 = addr;
+        val = 0x4040;
+        ptr2 = (u16 *)addr;
+        D_80038074 = val;
+        ptr = ptr2;
+    } while (0);
+    addr = (s32)ptr;
+    *ptr = val;
+    return addr;
+}
 
 s32 func_1000390C(void) {
     return 0;

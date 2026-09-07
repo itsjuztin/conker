@@ -2574,7 +2574,9 @@ struct struct224 {
     u8  pad0[0x10];
     s32 unk10;
     u8  unk14;
-    u8  pad15[0xB];
+    u8  pad15[8];
+    u8  unk1D;
+    u8  pad1E[2];
     s16 unk20;
     u8  pad22[0x2];
     s32 unk24;
