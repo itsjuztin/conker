@@ -174,6 +174,55 @@ void func_16000424(struct118 *arg0) {
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/debugger/debugger/func_16000590.s")
+// NON-MATCHING: score 1532 (register allocation only). Target uses 6 saved registers (s0-s5),
+// promoting arg0 to s5 (move s5, a0) to keep it live across the FPCSR check loop and page selection.
+// IDO spills arg0 to 0x30(sp) when compiled from C. Logic is 100% verified.
+// void func_16000590(struct118 *arg0) {
+//     s32 s0;
+//     s32 s1;
+//     u32 s2;
+//     s32 *s3;
+//     s32 s4;
+//     s32 v0;
+//
+//     s4 = 0;
+//     s2 = arg0->unk12C;
+//     func_160012B0(3, D_160047A4);
+//     func_16001044(0xA, 0, s2);
+//
+//     s2 >>= 12;
+//     s0 = 0x2C;
+//     s1 = 0;
+//     do {
+//         if (s2 & 1) {
+//             func_160012B0(s0, D_16003B30[s1]);
+//             s0 += 0x20;
+//         }
+//         s1++;
+//         s2 >>= 1;
+//     } while (s1 < 6);
+//
+//     s1 = 0;
+//     s0 = 0xC3;
+//     if (D_16003B28 == 1) {
+//         v0 = 0x4C;
+//     } else {
+//         v0 = 0x6C;
+//         s4 = 0x10;
+//     }
+//     s2 = s1 + s4;
+//     s3 = (s32 *)arg0 + v0;
+//     s4 = (s32)D_160047AC;
+//     do {
+//         func_160012B0(s0, (u8 *)s4);
+//         func_16001044(s0 + 2, 1, s2);
+//         func_16001044(s0 + 5, 2, s3[1]);
+//         s1++;
+//         s3 += 2;
+//         s0 += 0x20;
+//         s2++;
+//     } while (s1 < 16);
+// }
 
 void func_160006CC(struct118 *arg0) {
     func_160006CC_sp3C sp3C;
@@ -399,24 +448,23 @@ s32 func_16000A5C(void) {
 // called from func_10007DAC
 #pragma GLOBAL_ASM("asm/nonmatchings/debugger/debugger/func_16000B14.s")
 #pragma GLOBAL_ASM("asm/nonmatchings/debugger/debugger/func_16000F8C.s")
-// NON-MATCHING: lots to figure out
+// NON-MATCHING: best score 77. The floating point exception logic and format calls are byte-exact.
+// IDO 5.3 with -g3 allocates an unused 8-byte debug home on the stack for named local variables,
+// resulting in a 0x60 frame size instead of 0x58. Logic verified.
 // void func_16000F8C(s32 arg0, f32 arg1) {
-//     struct165 tmp;
-//     s32 temp_v1;
-//     u32 temp_t9;
+//     char buf[0x2C];
+//     s32 bits;
 //
 //     if ((arg0 >= (D_160038A0 << 5)) && (arg0 < 833)) {
-//         tmp.unk18 = arg1;
-//         temp_v1 = *(s32*)&tmp.unk18;
-//         temp_t9 = (u32) (temp_v1 & 0x7F800000) >> 0x17;
-//         if ((temp_t9 == 0) || (temp_t9 >= 0x255U)) {
-//             if ((temp_v1 * 2) != 0) {
-//                 func_160012B0(arg1, &D_160047D0); // arg0,
+//         bits = *(s32 *)&arg1;
+//         if (((u32)(bits & 0x7F800000) >> 23) - 1U >= 0xFEU) {
+//             if ((u32)(bits << 1) != 0) {
+//                 func_160012B0(arg0, D_160047D0);
 //                 return;
 //             }
 //         }
-//         func_16001B34(&arg0, &tmp.unk0, &D_160047D4, &D_160047DC, &D_160047E0); // , (f64) arg1
-//         func_160012B0(arg0, &tmp.unk0);
+//         func_16001B34((u8 *)buf, D_160047D4, D_160047DC, D_160047E0, (f64)arg1);
+//         func_160012B0(arg0, (u8 *)buf);
 //     }
 // }
 
@@ -486,6 +534,56 @@ void func_16001390(s16 arg0, s16 arg1, register s16 arg2, s16 arg3)
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/debugger/debugger/func_160014F0.s")
+// NON-MATCHING: best score 40 (JUSTREG register swap between t0/a3 for glyph/outer setup).
+// Declaring arg1 as `u8` reproduces the exact entry `sw a1, 4(sp); andi t6, a1, 0xFF; move a1, t6`
+// param-narrowing sequence. The unrolled 4-pixel inner loop and row advance match byte-for-byte.
+// s32 func_160014F0(s32 arg0, u8 arg1) {
+//     u16 *v0;
+//     u16 fg;
+//     s32 c;
+//     u8 *glyph;
+//     s32 outer;
+//     s32 inner;
+//     u16 bits;
+//     u16 pixel;
+//
+//     v0 = (u16 *)arg0;
+//     fg = D_1600388C;
+//     c = arg1;
+//     inner = arg1 < 0x20;
+//     if (inner) {
+//         c = 0x20;
+//     }
+//     outer = 0, glyph = &D_16003CE0[(c - 0x20) << 3];
+//     do {
+//         inner = 0;
+//         bits = *glyph;
+//         do {
+//             pixel = (bits & 0x80) ? fg : 1;
+//             bits = (u16)(bits << 1);
+//             *v0++ = pixel;
+//
+//             pixel = (bits & 0x80) ? fg : 1;
+//             bits = (u16)(bits << 1);
+//             *v0++ = pixel;
+//
+//             pixel = (bits & 0x80) ? fg : 1;
+//             bits = (u16)(bits << 1);
+//             *v0++ = pixel;
+//
+//             pixel = (bits & 0x80) ? fg : 1;
+//             bits = (u16)(bits << 1);
+//             *v0++ = pixel;
+//
+//             inner += 4;
+//         } while (inner != 8);
+//         outer++;
+//         glyph++;
+//         v0 += D_160038A8 - 8;
+//     } while (outer != 8);
+//
+//     return arg0 + 0x10;
+// }
 
 // splat into framebuffer
 s32 func_1600160C(s32 arg0) {
