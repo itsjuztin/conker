@@ -1,25 +1,25 @@
 {
-  "date": 1788822156,
-  "hash": "467e04cbb61d33883a9ac7e34b031e9de1c1e13c",
+  "date": 1788918103,
+  "hash": "cb0ef7730314117e9ecc9eaddd1d089ba2bda2b0",
   "progress": [
     {
       "version": "us",
       "sections": [
         {
           "section": "init",
-          "c": 51564,
+          "c": 79544,
           "total": 164048,
-          "c_functions": 313,
-          "total_functions": 622,
-          "percent": 31.4323
+          "c_functions": 384,
+          "total_functions": 621,
+          "percent": 48.4882
         },
         {
           "section": "game",
-          "c": 124772,
+          "c": 248776,
           "total": 2072880,
-          "c_functions": 1442,
-          "total_functions": 7271,
-          "percent": 6.0193
+          "c_functions": 1836,
+          "total_functions": 7273,
+          "percent": 12.0015
         },
         {
           "section": "debugger",
@@ -31,11 +31,11 @@
         },
         {
           "section": "all",
-          "c": 184336,
+          "c": 336320,
           "total": 2256728,
-          "c_functions": 1915,
-          "total_functions": 8075,
-          "percent": 8.1683
+          "c_functions": 2380,
+          "total_functions": 8076,
+          "percent": 14.903
         }
       ]
     }
