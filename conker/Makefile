@@ -134,6 +134,7 @@ $(BUILD_DIR)/$(SRC_DIR)/init_22460.c.o: OPT_FLAGS := -g
 # this whole TU is unoptimised -g output (constant-divisor `div`, every local
 # reloaded per reference, dead `b end / nop` after an explicit return).
 $(BUILD_DIR)/$(SRC_DIR)/game_221290.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(SRC_DIR)/game_21D420.c.o: OPT_FLAGS := -O2
 
 
 $(BUILD_DIR)/$(SRC_DIR)/libultra/io/ai.c.o: OPT_FLAGS := -O1
