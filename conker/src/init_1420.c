@@ -5,15 +5,20 @@
 
 
 #pragma GLOBAL_ASM("asm/nonmatchings/init_1420/func_10001420.s")
-// NOT MATCHING: JUSTREG: uses v0 registers not a1 registers
+// JUSTREG / REGISTER ALLOCATION ARTIFACT (investigated 2026-09-08):
+// The loop below is structurally byte-perfect (every opcode, immediate, label,
+// and delay slot store matches target 1:1), but IDO -O2 priority allocator puts
+// the pointer in v0 and bound in v1, whereas target uses a1 and a0.
+// A 3-dummy variable formulation matches 7 of 9 instructions (only a2 vs a0):
+//     int c1 = 4000, c2 = 60, c3 = 4;
+//     int *tmp = (int *)&D_80043B40;
+//     do { *tmp++ = 0; } while ((u32)tmp < (u32)&D_80043B40 + c1 + c2 + c3);
+// Per tools/ido_cookbook.md BAIL criteria, parked as assembly stub.
 // void func_10001420(void) {
-//     s32 *tmp = &D_80043B40;
-//     s32 cnt = 4064;
-//
+//     s32 *p = (s32 *)&D_80043B40;
 //     do {
-//         *tmp++ = 0;
-//     }
-//     while ((s32)tmp < (u32)&D_80043B40 + cnt);
+//         *p++ = 0;
+//     } while ((u32)p < (u32)&D_80043B40 + 0xFE0);
 // }
 
 void func_10001444(void) {
