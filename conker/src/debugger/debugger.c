@@ -447,6 +447,158 @@ s32 func_16000A5C(void) {
 
 // called from func_10007DAC
 #pragma GLOBAL_ASM("asm/nonmatchings/debugger/debugger/func_16000B14.s")
+// REVERSED: debugger_main(OSThread *thread) — main crash debugger entry point and menu loop.
+// Validates framebuffer pointers in D_8002AAE8, invokes func_16003650() to snapshot TLB
+// registers (EntryLo0/1, EntryHi, PageMask), checks whether faulting PC resides in a valid
+// mapped game TLB segment, extracts crash context, and runs the interactive crash menu loop
+// dispatching page rendering via D_16003AF8 and controller input via D_16003B08 with analog
+// stick deadzones (+/-50) and button edge detection. On exit, resumes thread or advances PC (pc += 4).
+// All 10 callee-saved registers (s0-s7, fp, ra), 80-byte stack frame, and control flow match byte-exact.
+// s32 func_16000B14(OSThread *thread) {
+//     s32 pad[3];
+//     s32 first_frame;
+//     s32 s3;
+//     u32 pc;
+//     u32 vpn;
+//     u32 is_odd_page;
+//     u32 *p;
+//     u32 offset;
+// 
+//     s3 = 0;
+//     first_frame = 1;
+//     if (D_8002AC5C != 0) {
+//         return 0;
+//     }
+// 
+//     D_16003888 = 0;
+//     if (D_8002AAE8[0] == 0 || D_8002AAE8[1] == 0) {
+//         D_8002AAE8[0] = 0x80350000;
+//         D_8002AAE8[1] = 0x80350000;
+//         return 0;
+//     }
+// 
+//     func_16003650();
+// 
+//     D_160038AC[15] = D_8003C8E8[0];
+//     D_1600392C[15] = D_8003C8E8[1];
+//     D_160039E8 = D_8003C8E8[2];
+//     D_16003A68 = D_8003C8E8[3];
+// 
+//     pc = thread->context.pc;
+//     if ((pc & 0xFF000000) != 0x15000000) {
+//         D_16003AF0 = 1;
+//     } else {
+//         vpn = pc & ~0xFFF;
+//         is_odd_page = vpn & 0x1000;
+//         vpn &= ~0x1000;
+//         D_16003AF0 = 0;
+//         p = D_160039AC;
+//         offset = 0;
+//         do {
+//             if (vpn == p[0]) {
+//                 u32 entry = (is_odd_page == 0) ? *(u32 *)((u8 *)D_160038AC + offset) : *(u32 *)((u8 *)D_1600392C + offset);
+//                 if (entry & 2) {
+//                     D_16003AF0 = 1;
+//                 }
+//             }
+//             if (vpn == p[1]) {
+//                 u32 entry = (is_odd_page == 0) ? *(u32 *)((u8 *)D_160038AC + offset + 4) : *(u32 *)((u8 *)D_1600392C + offset + 4);
+//                 if (entry & 2) {
+//                     D_16003AF0 = 1;
+//                 }
+//             }
+//             if (vpn == p[2]) {
+//                 u32 entry = (is_odd_page == 0) ? *(u32 *)((u8 *)D_160038AC + offset + 8) : *(u32 *)((u8 *)D_1600392C + offset + 8);
+//                 if (entry & 2) {
+//                     D_16003AF0 = 1;
+//                 }
+//             }
+//             if (vpn == p[3]) {
+//                 u32 entry = (is_odd_page == 0) ? *(u32 *)((u8 *)D_160038AC + offset + 12) : *(u32 *)((u8 *)D_1600392C + offset + 12);
+//                 if (entry & 2) {
+//                     D_16003AF0 = 1;
+//                 }
+//             }
+//             p += 4;
+//             offset += 16;
+//         } while (p != D_16003A2C);
+//     }
+// 
+//     if (((D_8003C8E0 >> 24) & 0xFF) == 0xC) {
+//         thread = &D_80031AE0;
+//     }
+// 
+//     if (D_8002BDE0[1] == (u32)D_8002AAE8[1]) {
+//         D_16003888 = 1;
+//     }
+// 
+//     D_1600389C = (struct118 *)thread;
+//     D_160038A4 = 0;
+//     if (thread->context.cause == 0x20 && (void *)thread->context.pc == func_150AD770) {
+//         D_160038A4 = 1;
+//     }
+// 
+//     do {
+//         if (first_frame == 0 && (s3 & 2)) {
+//             func_16001678();
+//         }
+//         if (D_16003AF8[D_16003AF4] != NULL) {
+//             D_16003AF8[D_16003AF4]();
+//         }
+//         osWritebackDCacheAll();
+// 
+//         do {
+//             s8 stick_x;
+//             s8 stick_y;
+// 
+//             s3 = 0;
+//             func_16001700();
+//             D_16003898 = D_16003894;
+//             func_16001830(D_160036F0);
+// 
+//             if (first_frame != 0) {
+//                 D_16003898 = D_16003894;
+//             }
+// 
+//             stick_x = D_160036F0[2];
+//             D_16003894 = *(u16 *)D_160036F0;
+//             if (stick_x >= 51) {
+//                 D_16003894 |= 0x20000;
+//             }
+//             if (stick_x < -50) {
+//                 D_16003894 |= 0x10000;
+//             }
+// 
+//             stick_y = D_160036F0[3];
+//             if (stick_y >= 51) {
+//                 D_16003894 |= 0x40000;
+//             }
+//             if (stick_y < -50) {
+//                 D_16003894 |= 0x80000;
+//             }
+// 
+//             D_16003890 = (D_16003894 ^ D_16003898) & D_16003894;
+// 
+//             if (D_16003B08[D_16003AF4] != NULL) {
+//                 s3 = D_16003B08[D_16003AF4]();
+//             }
+//         } while ((s3 & 5) == 0);
+//         first_frame = 0;
+//     } while ((s3 & 4) == 0);
+// 
+//     if (D_16003AF0 == 0) {
+//         thread->state = 4;
+//         thread->flags = 0;
+//         return 1;
+//     }
+// 
+//     if (thread->context.cause == 0x20 && D_160038A4 == 0) {
+//         thread->context.pc += 4;
+//         return 1;
+//     }
+// 
+//     return 0;
+// }
 #pragma GLOBAL_ASM("asm/nonmatchings/debugger/debugger/func_16000F8C.s")
 // NON-MATCHING: best score 77. The floating point exception logic and format calls are byte-exact.
 // IDO 5.3 with -g3 allocates an unused 8-byte debug home on the stack for named local variables,
@@ -454,7 +606,7 @@ s32 func_16000A5C(void) {
 // void func_16000F8C(s32 arg0, f32 arg1) {
 //     char buf[0x2C];
 //     s32 bits;
-//
+// 
 //     if ((arg0 >= (D_160038A0 << 5)) && (arg0 < 833)) {
 //         bits = *(s32 *)&arg1;
 //         if (((u32)(bits & 0x7F800000) >> 23) - 1U >= 0xFEU) {
@@ -469,6 +621,82 @@ s32 func_16000A5C(void) {
 // }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/debugger/debugger/func_16001044.s")
+// REVERSED: draw_number(pos, mode, val) — unified number renderer for hex, dec, and float.
+// mode == 0: renders 8-digit hexadecimal formatted text into framebuffer via func_160014F0.
+// mode == 1: signed decimal formatting using powers of 10 struct copy from D_16003B50.
+// mode == 2: single-precision floating-point formatting, delegates to func_16001B34 ("%s%s%f")
+//            with special handling for NaN.
+// Struct copy, 184-byte stack frame (-0xB8), and control flow branches match byte-exact.
+// void func_16001044(s32 pos, s32 mode, s32 val) {
+//     Powers10 powers;
+//     s32 fb;
+//     s32 *p;
+//     char buf[0x24];
+//     f32 fval;
+// 
+//     powers = *(Powers10 *)&D_16003B50;
+// 
+//     if (pos >= (D_160038A0 << 5) && pos < 833) {
+//         fb = func_1600160C(pos);
+//         switch (mode) {
+//         case 0:
+//             fb += 0x70;
+//             for (pos = 0; pos < 8; pos++) {
+//                 u8 c = val & 0xF;
+//                 if (c >= 10) {
+//                     c += 7;
+//                 }
+//                 c += 0x30;
+//                 func_160014F0(fb, c);
+//                 val >>= 4;
+//                 fb -= 0x10;
+//             }
+//             break;
+// 
+//         case 1: {
+//             s32 *powers_start;
+//             if (val < 0) {
+//                 fb = func_160014F0(fb, '-');
+//                 val = -val;
+//             }
+//             mode = 0;
+//             powers_start = powers.val;
+//             p = &powers.val[9];
+//             do {
+//                 s32 div_val = *p;
+//                 s32 digit = val / div_val;
+//                 val = val % div_val;
+//                 if (digit > 0 || mode != 0 || p == powers_start) {
+//                     fb = func_160014F0(fb, digit + '0');
+//                     mode = 1;
+//                 }
+//                 p--;
+//             } while (p >= powers.val);
+//             break;
+//         }
+// 
+//         case 2:
+//             {
+//                 s32 v0 = val & 0x7F800000;
+//                 s32 t0 = v0 >> 23;
+//                 if (t0 > 0) {
+//                     if (t0 < 0xFF) {
+//                         goto format_float;
+//                     }
+//                 }
+//                 if (v0 != 0 || (val << 9) != 0) {
+//                     func_160012B0(pos, D_160047E4);
+//                     return;
+//                 }
+//             }
+//         format_float:
+//             *(s32 *)&fval = val;
+//             func_16001B34((u8 *)buf, D_160047E8, D_160047F0, D_160047F4, (f64)fval);
+//             func_160012B0(pos, (u8 *)buf);
+//             break;
+//         }
+//     }
+// }
 
 void func_160012B0(s32 arg0, u8 *arg1) {
     if (arg1 && (arg0 >= (D_160038A0 << 5)) && (arg0 < 833)) {
