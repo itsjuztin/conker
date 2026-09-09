@@ -1,0 +1,34 @@
+#include <ultra64.h>
+#include "functions.h"
+#include "variables.h"
+
+
+#pragma GLOBAL_ASM("asm/nonmatchings/game_209B50/func_151DC6A0.s")
+
+void func_151DC6A0(struct127 *arg0, u8 arg1, s32 arg2);
+
+struct dc8bc_a { s32 unk0[3]; };
+
+void func_151DC8BC(struct127 *arg0, s32 arg1, u8 arg2, u8 arg3, u8 arg4, s32 arg5) {
+    struct {
+        struct dc8bc_a unk0;
+        f32 unkC;
+        u8 unk10;
+    } sp34;
+    struct260 *temp_v0;
+
+    if (arg2 != 0) {
+        func_151DC6A0(arg0, arg4, arg5);
+    }
+
+    sp34.unk0 = *(struct dc8bc_a *)arg0;
+    sp34.unkC = 0.0f;
+    sp34.unk10 = arg3;
+
+    temp_v0 = func_15149130((s16)arg1, -1, 0x5B, -1, 1, 0, (struct37 *)0x14, arg4, arg5);
+    if (temp_v0 != NULL) {
+        memcpy((void *)((s32)temp_v0 + 0x28), &sp34, 0x14);
+    }
+}
+
+#pragma GLOBAL_ASM("asm/nonmatchings/game_209B50/func_151DC97C.s")

@@ -1,5 +1,5 @@
 {
-  "date": 1788918891,
+  "date": 1788920258,
   "hash": "",
   "progress": [
     {
@@ -14,28 +14,28 @@
           "section": "init"
         },
         {
-          "c": 249280,
+          "c": 794112,
           "total": 2072880,
-          "c_functions": 1830,
-          "total_functions": 7265,
-          "percent": 12.0258,
+          "c_functions": 5621,
+          "total_functions": 7263,
+          "percent": 38.3096,
           "section": "game"
         },
         {
-          "c": 8000,
+          "c": 11144,
           "total": 19800,
-          "c_functions": 160,
+          "c_functions": 172,
           "total_functions": 182,
-          "percent": 40.404,
+          "percent": 56.2828,
           "section": "debugger"
         },
         {
           "section": "all",
-          "c": 345340,
+          "c": 893316,
           "total": 2256728,
-          "c_functions": 2360,
-          "total_functions": 8039,
-          "percent": 15.3027
+          "c_functions": 6163,
+          "total_functions": 8037,
+          "percent": 39.5846
         }
       ]
     }
