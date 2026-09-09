@@ -208,7 +208,7 @@ segments:
       - [0x290D0, data] # could be larger/smaller
 
       - [0x2BF20, rodata]
-      - [0x2C080, rodata]
+      - [0x2C080, .rodata, init_2E50]
       - [0x2C0A0, rodata]
       - [0x2C0C0, rodata]
       - [0x2C120, rodata]
@@ -218,12 +218,13 @@ segments:
       - [0x2C250, rodata]
       - [0x2C450, .rodata, libultra/audio/init_128D0]
       - [0x2C460, rodata]
-      - [0x2C6B0, rodata]
+      - [0x2C6B0, .rodata, libultra/audio/init_15550] # D_8002C6B0 + D_8002C6DC (the two "freed too early" strings) + jtbl_8002C708, all _n_handleEvent
       - [0x2C750, rodata]
       - [0x2C760, .rodata, libultra/audio/cents2ratio]
       - [0x2C770, rodata]
       - [0x2C790, .rodata, libultra/audio/init_1D900]
-      - [0x2C7A0, rodata]
+      - [0x2C7A0, .rodata, init_1E530] # D_8002C7A0 + jtbl_8002C7A4 + D_8002C7C4/C8, all init_1E530
+      - [0x2C7D0, .rodata, init_20000] # jtbl_8002C7D0 (func_10020000's switch) + D_8002C814 (65535.0f literal in _getRate)
       - [0x2C820, rodata]
       - [0x2C830, rodata]
       - [0x2C850, rodata]
@@ -982,8 +983,8 @@ segments:
       - [0x2367E0, rodata]
       - [0x23A490, rodata]
       - [0x23A4A0, rodata]
-      - [0x23A4C0, rodata]
-      - [0x23A4F0, rodata] # , game/entrypoint] # jumptable 0x80095A30
+      - [0x23A4C0, .rodata, game_33990]
+      - [0x23A4F0, .rodata, game/entrypoint] # jumptable 0x80095A30
       - [0x23A510, rodata]
       - [0x23A5D0, rodata]
       - [0x23A600, rodata]

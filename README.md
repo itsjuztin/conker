@@ -1,11 +1,11 @@
 # Conker's Bad Fur Day Decompilation
 
-![Conker's Bad Fur Day (US) Progress](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fitsjuztin%2Fconker%2Fmaster%2Flatest.json&color=critical&label=Conker's%20Bad%20Fur%20Day%20(US)&query=$.progress[0].sections[3].percent&suffix=%25) ![all Functions](https://img.shields.io/badge/funcs-2380%2F8076-blue) ![Build Status](https://github.com/itsjuztin/conker/actions/workflows/pages.yml/badge.svg)
+![Conker's Bad Fur Day (US) Progress](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fitsjuztin%2Fconker%2Fmaster%2Flatest.json&color=critical&label=Conker's%20Bad%20Fur%20Day%20(US)&query=$.progress[0].sections[3].percent&suffix=%25) ![all Functions](https://img.shields.io/badge/funcs-2360%2F8039-blue) ![Build Status](https://github.com/itsjuztin/conker/actions/workflows/pages.yml/badge.svg)
 
 | Progress                                                                                                                                           | Functions                                                |
 |----------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------|
-| ![init Progress](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fitsjuztin%2Fconker%2Fmaster%2Flatest.json&color=yellow&label=init&query=$.progress[0].sections[0].percent&suffix=%25)      | ![init Functions](https://img.shields.io/badge/funcs-384%2F621-blue)      |
-| ![game Progress](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fitsjuztin%2Fconker%2Fmaster%2Flatest.json&color=critical&label=game&query=$.progress[0].sections[1].percent&suffix=%25)     | ![game Functions](https://img.shields.io/badge/funcs-1836%2F7273-blue) |
+| ![init Progress](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fitsjuztin%2Fconker%2Fmaster%2Flatest.json&color=yellowgreen&label=init&query=$.progress[0].sections[0].percent&suffix=%25)      | ![init Functions](https://img.shields.io/badge/funcs-370%2F592-blue)      |
+| ![game Progress](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fitsjuztin%2Fconker%2Fmaster%2Flatest.json&color=critical&label=game&query=$.progress[0].sections[1].percent&suffix=%25)     | ![game Functions](https://img.shields.io/badge/funcs-1830%2F7265-blue) |
 | ![debugger Progress](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fitsjuztin%2Fconker%2Fmaster%2Flatest.json&color=orange&label=debugger&query=$.progress[0].sections[2].percent&suffix=%25) | ![debugger Functions](https://img.shields.io/badge/funcs-160%2F182-blue) |
 
 A WIP decompilation of Conker's Bad Fur Day.
