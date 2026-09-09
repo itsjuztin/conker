@@ -67,44 +67,33 @@ void func_10004674(void) {
     D_8003A571 = 0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/init_4470/func_100046E4.s")
-// NON-MATCHING: stack isnt right
-// void func_100046E4(s32 devAddr, void *dramAddr, u32 size) {
-//     s32 _dramAddr;
-//     s32 idx;
-//     s32 threadId;
-//     s32 _devAddr; // pad
-//     OSMesgQueue *mesgQueue;
-//     OSIoMesg *sp68;
-//     OSIoMesg *sp64; // mesg?
-//     u32 _size;
-//     u32 sent;
-//
-//
-//     threadId = __osRunningThread->id - 3;
-//     if ((threadId >= 4) || (idx = threadId, (threadId < 0))) {
-//         idx = 0;
-//     }
-//     sent = 0;
-//     osInvalDCache(dramAddr, size);
-//     if (size != 0) {
-//         mesgQueue =  &gMessageQueue[idx];
-//         _dramAddr = dramAddr;
-//         // _devAddr = devAddr;
-//         do {
-//             if ((size - sent) < 81920) {
-//                 _size = size - sent;
-//             } else {
-//                 _size = 81920;
-//             }
-//             osPiStartDma(&sp68, 0, 0, devAddr, _dramAddr, _size, mesgQueue);
-//             osRecvMesg(mesgQueue, &sp64, 1);
-//             sent += _size;
-//             devAddr += _size;
-//             _dramAddr += _size;
-//         } while (sent < size) ;
-//     }
-// }
+void func_100046E4(s32 devAddr, void *dramAddr, u32 size) {
+    s32 ioMsg[4];
+    OSMesg recvMsg;
+    OSMesgQueue *msgQueue;
+    s32 threadId;
+    u32 sent;
+    u32 transferSize;
+
+    sent = 0;
+    threadId = __osRunningThread->id - 3;
+    if ((threadId >= 4) || (threadId < 0)) {
+        threadId = 0;
+    }
+
+    osInvalDCache(dramAddr, size);
+    if (size != 0) {
+        msgQueue = &gMessageQueue[threadId];
+        do {
+            transferSize = ((size - sent) < 0x14000U) ? (size - sent) : 0x14000;
+            osPiStartDma((OSIoMesg *)((u8 *)ioMsg - 8), 0, 0, devAddr, dramAddr, transferSize, msgQueue);
+            osRecvMesg(msgQueue, (OSMesg *)((u8 *)&recvMsg - 8), OS_MESG_BLOCK);
+            sent += transferSize;
+            devAddr += transferSize;
+            dramAddr = (void *)((u8 *)dramAddr + transferSize);
+        } while (sent < size);
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/init_4470/func_1000480C.s")
 // void func_1000480C(s32 devAddr, void *dramAddr, u32 size) {

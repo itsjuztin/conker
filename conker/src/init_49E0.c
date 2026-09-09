@@ -3,6 +3,9 @@
 #include "functions.h"
 #include "variables.h"
 
+void func_10004F00(void);
+void func_10004FE0(void);
+
 
 // contains jr
 #pragma GLOBAL_ASM("asm/nonmatchings/init_49E0/func_100049E0.s")
@@ -127,7 +130,29 @@
 //     goto loop_1;
 // }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/init_49E0/func_10004DB0.s")
+void func_10004DB0(void) {
+    if (D_8003A582 == 0) {
+        if (osRecvMesg(&D_8003B1E8, &D_8002AC50, 0) == 0) {
+            if ((osViGetCurrentFramebuffer() != D_8002AC50->framebuffer) &&
+                (osViGetNextFramebuffer() != D_8002AC50->framebuffer) &&
+                ((D_8003B23A == 0) || (D_8003B238 >= D_8003B239))) {
+                if ((D_8003B238 != 0xFF) &&
+                    ((D_8003B238 >= D_8003B239) || (D_8003B23A == 0))) {
+                    D_8003B239 = D_8003B238;
+                }
+                func_10004F00();
+                return;
+            }
+            D_8003A582 = 2;
+        }
+    } else if (D_8003A582 == 2) {
+        if ((D_8003B23A == 0) || (D_8003B238 >= D_8003B239)) {
+            func_10004F00();
+        }
+    } else if (D_8003A582 == 6) {
+        func_10004FE0();
+    }
+}
 // NON-MATCHING: branching is not right
 // void func_10004DB0(void) {
 //     if (D_8003A582 == 0) {

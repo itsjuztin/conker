@@ -688,6 +688,8 @@ extern s32 D_800A4AA0; //?
 extern f32 D_800A5168;
 extern f32 D_800A5178;
 extern f32 D_800A45B4;
+extern f32 D_800A5624;
+extern f32 D_800A5628;
 extern f32 D_800A5644;
 extern f32 D_800A56A8;
 extern f32 D_800A56AC;
@@ -1075,6 +1077,7 @@ extern struct258 *D_800D20FC;
 
 extern s32 *D_800D2104;
 extern u8  D_800D2108[];
+extern u8  D_800D2DAB;
 extern s16 D_800D2110[];
 extern s32 D_800D2120;
 extern s32 D_800D2124;
