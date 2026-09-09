@@ -39,7 +39,66 @@ void func_15048B10(s32 arg0, s32 arg1) {
     func_150A7A48(&tmp.unk0,  &tmp.unk134, arg1);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/game_75FC0/func_15048C30.s")
+f32 func_15048C30(f32 arg0) {
+    f32 temp_f0;
+    f32 temp_f12;
+    f32 temp_f14;
+    f32 temp_f16;
+    f32 temp_f18;
+    f32 temp_f2;
+    f32 temp_f2_3;
+    s32 temp_t6;
+    s32 temp_v0;
+
+    temp_v0 = *(s32*)&arg0;
+    temp_t6 = (temp_v0 >> 0x17) & 0xFF;
+    if (temp_t6 < 0x7E) {
+        if (temp_t6 >= 0x63) {
+            temp_f2 = arg0 * arg0;
+            temp_f12 = (((((((D_80099020[5] * temp_f2) + D_80099020[4]) * temp_f2) + D_80099020[3]) * temp_f2) + D_80099020[2]) * temp_f2) + D_80099020[1];
+            temp_f14 = ((((((temp_f2 + D_80099038[3]) * temp_f2) + D_80099038[2]) * temp_f2) + D_80099038[1]) * temp_f2) + D_80099038[0];
+            return ((temp_f2 * temp_f12 * arg0) / temp_f14) + arg0;
+        }
+        return arg0;
+    }
+    if (temp_t6 < 0x7F) {
+        temp_f2 = fabsf(arg0);
+        if (temp_f2 < D_80085FE8) {
+            temp_f2 = arg0 * arg0;
+            temp_f16 = (temp_f2 + temp_f2) - D_80085FD0;
+            temp_f18 = temp_f16 * temp_f16;
+            temp_f12 = (((((((D_80099020[5] * temp_f18) + D_80099020[4]) * temp_f18) + D_80099020[3]) * temp_f18) + D_80099020[2]) * temp_f18) + D_80099020[1];
+            temp_f14 = ((((((temp_f18 + D_80099038[3]) * temp_f18) + D_80099038[2]) * temp_f18) + D_80099038[1]) * temp_f18) + D_80099038[0];
+            if (temp_v0 > 0) {
+                temp_f0 = ((temp_f18 * temp_f12 * temp_f16) / temp_f14) + temp_f16;
+                return (0.5f * temp_f0) + D_80085FD8;
+            } else {
+                temp_f0 = ((temp_f18 * temp_f12 * temp_f16) / temp_f14) + temp_f16;
+                return D_80085FE0 - (0.5f * temp_f0);
+            }
+        }
+        temp_f16 = (D_80085FD0 - temp_f2) * 0.5f;
+        temp_f0 = sqrtf(temp_f16);
+        temp_f12 = (((D_8009904C[3] * temp_f16) + D_8009904C[2]) * temp_f16) + D_8009904C[1];
+        temp_f14 = ((((temp_f16 + D_8009905C[2]) * temp_f16) + D_8009905C[1]) * temp_f16) + D_8009905C[0];
+        temp_f18 = ((temp_f16 * temp_f12 * temp_f0) / temp_f14) + temp_f0;
+        if (temp_v0 > 0) {
+            return D_80085FDC - (temp_f18 + temp_f18);
+        } else {
+            return temp_f18 + temp_f18 + D_80085FE4;
+        }
+    }
+    if (arg0 != arg0) {
+        return 0.0f;
+    }
+    if (arg0 == D_80085FD0) {
+        return D_80085FDC;
+    }
+    if (arg0 == D_80085FD4) {
+        return D_80085FE4;
+    }
+    return 0.0f;
+}
 // NON-MATCHING: regs and ordering needs fixing
 // f32 func_15048C30(f32 arg0) {
 //     f32 temp_f0;
@@ -147,7 +206,7 @@ f32 func_15048FC8(struct17 *arg0) {
 
 s32 func_150490A8(struct17 *arg0) {
     f32 temp_f12;
-    s32 phi_v1;
+    s32 angle;
 
     temp_f12 = sqrtf((arg0->unk0 * arg0->unk0) + (arg0->unk8 * arg0->unk8));
 
@@ -156,16 +215,16 @@ s32 func_150490A8(struct17 *arg0) {
     }
 
     temp_f12 = arg0->unk0 / temp_f12;
-    phi_v1 = func_15048864(temp_f12);
+    angle = func_15048864(temp_f12);
 
     if (0.0f < arg0->unk8) {
-        if (phi_v1 < 64) {
-            phi_v1 = 128 - phi_v1;
+        if (angle < 64) {
+            angle = 128 - angle;
         } else {
-            phi_v1 = 384 - phi_v1;
+            angle = 384 - angle;
         }
     }
-    return phi_v1;
+    return angle;
 }
 
 void func_15049148(struct17 *arg0, f32 arg1, struct17 *arg2) {

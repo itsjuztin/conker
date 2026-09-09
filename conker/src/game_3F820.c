@@ -3,8 +3,40 @@
 #include "functions.h"
 #include "variables.h"
 
+typedef struct {
+    f32 unk0;
+    f32 unk4;
+    f32 unk8;
+    u8 padC[0x174];
+} D_800BE628View15012370;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/game_3F820/func_15012370.s")
+void func_15012370(void) {
+    f32 temp_f0;
+    f32 temp_f2;
+    f32 temp_f24;
+    f32 one;
+    f32 half;
+    s32 i;
+
+    i = 0;
+    if (D_80082FA0 >= 0) {
+        temp_f24 = D_80096560;
+        one = 1.0f;
+        half = 0.5f;
+        do {
+            func_151EF954(
+                ((f32 (*)[4][4])D_800DCC10)[i],
+                -(temp_f0 = (*(D_800BE628View15012370 **)&D_800BE628)[i].unk4 * half),
+                temp_f0,
+                -(temp_f2 = (*(D_800BE628View15012370 **)&D_800BE628)[i].unk8 * half),
+                temp_f2,
+                one,
+                temp_f24,
+                one);
+            i = (i + 1) & 0xFF;
+        } while (D_80082FA0 >= i);
+    }
+}
 // void func_15012370(void) {
 //     f32 temp_f0;
 //     f32 temp_f2;

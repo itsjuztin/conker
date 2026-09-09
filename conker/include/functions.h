@@ -1127,4 +1127,5 @@ void func_151EF954(f32 arg0[4][4], f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 a
 void func_151F3C4C(void);
 void func_151FA130(void);
 void func_1019EA88(void);
+void func_15168B10(s32 arg0, s32 arg1);
 #endif

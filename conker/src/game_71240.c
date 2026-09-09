@@ -3,6 +3,9 @@
 #include "functions.h"
 #include "variables.h"
 
+extern f32 sqrtf(f32);
+
+#pragma function sqrtf
 
 void func_15043D90(Mtx *m, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, f32 arg9) {
     f32 sp18[4][4];
@@ -68,4 +71,55 @@ void func_15043FF0(vertex *arg0, struct113 *arg1) {
     arg0->z += arg1->unk3C * 0.000015258789f;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/game_71240/func_150440A0.s")
+void func_150440A0(f32 arg0[4][4], f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, f32 arg9) {
+    f32 temp_f20;
+    f32 temp_f22;
+    f32 temp_f24;
+    f32 temp_f26;
+    f32 temp_f28;
+    f32 temp_f30;
+    f32 temp_f2;
+    f32 one;
+
+    temp_f20 = arg4 - arg1;
+    temp_f22 = arg5 - arg2;
+    temp_f24 = arg6 - arg3;
+    temp_f2 = -1.0f / sqrtf((temp_f20 * temp_f20) + (temp_f22 * temp_f22) + (temp_f24 * temp_f24));
+    temp_f20 *= temp_f2;
+    temp_f22 *= temp_f2;
+    temp_f24 *= temp_f2;
+
+    temp_f26 = (arg8 * temp_f24) - (arg9 * temp_f22);
+    temp_f28 = (arg9 * temp_f20) - (arg7 * temp_f24);
+    temp_f30 = (arg7 * temp_f22) - (arg8 * temp_f20);
+    temp_f2 = 1.0f / sqrtf((temp_f26 * temp_f26) + (temp_f28 * temp_f28) + (temp_f30 * temp_f30));
+    temp_f26 *= temp_f2;
+    temp_f28 *= temp_f2;
+    temp_f30 *= temp_f2;
+
+    arg7 = (temp_f22 * temp_f30) - (temp_f24 * temp_f28);
+    arg8 = (temp_f24 * temp_f26) - (temp_f20 * temp_f30);
+    arg9 = (temp_f20 * temp_f28) - (temp_f22 * temp_f26);
+    temp_f2 = 1.0f / sqrtf((arg7 * arg7) + (arg8 * arg8) + (arg9 * arg9));
+    arg7 *= temp_f2;
+    arg8 *= temp_f2;
+    arg9 *= temp_f2;
+
+    arg0[0][0] = temp_f26;
+    arg0[1][0] = arg7;
+    arg0[2][0] = temp_f20;
+    arg0[3][0] = arg1;
+    arg0[0][1] = temp_f28;
+    arg0[1][1] = arg8;
+    arg0[2][1] = temp_f22;
+    arg0[3][1] = arg2;
+    arg0[0][2] = temp_f30;
+    one = 1.0f;
+    arg0[1][2] = arg9;
+    arg0[2][2] = temp_f24;
+    arg0[3][2] = arg3;
+    arg0[0][3] = 0.0f;
+    arg0[1][3] = 0.0f;
+    arg0[2][3] = 0.0f;
+    arg0[3][3] = one;
+}

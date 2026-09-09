@@ -6,51 +6,35 @@
 
 void func_15052F9C(struct127 *arg0, f32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7, s32 arg8, s32 arg9);
 void func_1505327C(struct127 *arg0, f32 arg1, f32 arg2, s32 arg3, s32 arg4);
+void func_1502178C(struct127 *arg0, s32 arg1, s32 arg2);
+s32 func_150229E4(struct127 *arg0);
+s32 func_150535F4(struct127 *arg0);
+void func_15053750(struct127 *arg0);
+void func_15054F74(struct127 *arg0);
+void func_150562FC(struct127 *arg0);
+void func_15056B08(struct127 *arg0);
+void func_150585F0(struct127 *arg0, f32 arg1);
+void func_150597FC(struct127 *arg0);
+void func_150AFC68(s32 arg0, s32 arg1, s32 arg2, s32 arg3, u8 arg4, s32 arg5);
+extern f32 D_80099330;
+extern f32 D_80099334;
+extern f32 D_80099338;
+extern f32 D_80099344;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/game_77AD0/func_1504A620.s")
-// NON-MATCHING: work-in-progress...
+// PERMUTER CANDIDATE: structure byte-identical, global FP-reg rotation (zero lands in
+// $f14 instead of $f0 from instr 0, cascading all fp regs). best 1520.
 // f32 func_1504A620(f32 arg0) {
-//     f32 temp_f14;
-//     f32 temp_f2;
-//     f32 phi_f2;
-//     f32 phi_f0;
-//     s32 phi_v0;
-//     f32 tmp0;
-//
-//     if (arg0 < 0.0f) {
-//         return 0.0f;
-//     }
-//     if (arg0 == 0.0f) {
-//         return 0.0f;
-//     }
-//
-//     phi_f2 = 0.0f;
-//
-//     while (arg0 >= 2.0f ) {
-//         arg0 = arg0 * 0.5f;
-//         phi_f2 += D_800990B0;
-//     }
-//
-//     tmp0 = D_800990B4;
-//     while (arg0 < 1.0f) {
-//         arg0 = arg0 * 2.0f;
-//         phi_f2 -= tmp0;
-//     }
-//
-//     temp_f14 = (phi_f2 - 1.0f) / (phi_f2 + 1.0f);
-//     phi_f0 = 2.0f * temp_f14;
-//     phi_v0 = 1;
-//
-//     do {
-//         temp_f2 = phi_f2 + (phi_f0 / (f32) phi_v0);
-//         phi_f2 = temp_f2;
-//         phi_f0 = phi_f0 * (temp_f14 * temp_f14);
-//         phi_v0 = phi_v0 + 2;
-//     }
-//     while (temp_f2 != phi_f2);
-//
-//     return temp_f2;
+//     f32 sum, z, zsq, term, old; s32 n;
+//     if (arg0 < 0.0f) return 0.0f;
+//     if (arg0 == 0.0f) return 0.0f;
+//     sum = 0.0f;
+//     while (2.0f <= arg0) { arg0 = arg0 * 0.5f; sum += D_800990B0; }
+//     while (arg0 < 1.0f) { arg0 = arg0 + arg0; sum -= D_800990B4; }
+//     z = (arg0 - 1.0f) / (arg0 + 1.0f); zsq = z * z; term = z + z; n = 1;
+//     do { old = sum; sum += term / (f32) n; term *= zsq; n += 2; } while (sum != old);
+//     return sum;
 // }
+#pragma GLOBAL_ASM("asm/nonmatchings/game_77AD0/func_1504A620.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/game_77AD0/func_1504A730.s")
 // void func_1504A730(void) {
@@ -75,15 +59,15 @@ void func_1505327C(struct127 *arg0, f32 arg1, f32 arg2, s32 arg3, s32 arg4);
 //     void *temp_v0_6;
 //     void *temp_v0_8;
 //     void *temp_v1_2;
-//     struct127 *phi_s0;
-//     s32 phi_s1;
-//     f32 phi_f20;
-//     f32 phi_f0;
-//     s32 phi_s3;
-//     s8 phi_s2;
-//     void *phi_a1;
-//     s32 phi_t0;
-//     s32 phi_v1;
+//     struct127 *actor;
+//     s32 i;
+//     f32 dtMax;
+//     f32 dt;
+//     s32 result;
+//     s8 actorNum;
+//     void *cur;
+//     s32 j;
+//     s32 numPlayers;
 //
 //     D_800BE9EC = (u8)0;
 //     D_800D1548 += 1; //(s32) (D_800D1548 + 1);
@@ -93,51 +77,51 @@ void func_1505327C(struct127 *arg0, f32 arg1, f32 arg2, s32 arg3, s32 arg4);
 //     func_1508295C(D_800BE9F0, 0, 0);
 //     D_800CC2B8 ^= 1; //(u8) (D_800CC2B8 ^ 1);
 //
-//     // phi_s1 = (u8)0;
-//     for (phi_s1 = 0; phi_s1 < 25; phi_s1++) {
-//         phi_s0 = &D_800CC2D0[phi_s1];
-//         if (phi_s0 == 0) {
-//             phi_s2 = phi_s1 + 1;
+//     // i = (u8)0;
+//     for (i = 0; i < 25; i++) {
+//         actor = &D_800CC2D0[i];
+//         if (actor == 0) {
+//             actorNum = i + 1;
 //         } else {
-//             phi_s0->unk274 = (u8)0;
-//             phi_s0->unk300 = (u8)0;
-//             phi_s0->unkF4 = (s32) (phi_s0->unkF4 & 0xFFEE5FFF);
-//             D_800C3E78 = phi_s1;
-//             if (phi_s0->y_position <= (f32) phi_s0->unk38) {
-//                 if (phi_s0->unk127 == 0xFF) {
-//                     func_15060F28(phi_s0, 0);
-//                     phi_s2 = phi_s1 + 1;
+//             actor->unk274 = (u8)0;
+//             actor->unk300 = (u8)0;
+//             actor->unkF4 = (s32) (actor->unkF4 & 0xFFEE5FFF);
+//             D_800C3E78 = i;
+//             if (actor->y_position <= (f32) actor->unk38) {
+//                 if (actor->unk127 == 0xFF) {
+//                     func_15060F28(actor, 0);
+//                     actorNum = i + 1;
 //                 } else if (D_800BE616 == 0) {
-//                     func_1507D4F8(phi_s1);
-//                     phi_s2 = phi_s1 + 1;
+//                     func_1507D4F8(i);
+//                     actorNum = i + 1;
 //                 } else {
 // block_8:
-//                     if (phi_s0->unk2FA == 0) {
-//                         phi_s2 = phi_s1 + 1;
+//                     if (actor->unk2FA == 0) {
+//                         actorNum = i + 1;
 //                     } else {
-//                         D_800D154C = phi_s0;
-//                         temp_s2 = phi_s1 + 1;
-//                         phi_s0->unk12 += 1; // (u16) (phi_s0->unk12 + 1);
+//                         D_800D154C = actor;
+//                         temp_s2 = i + 1;
+//                         actor->unk12 += 1; // (u16) (actor->unk12 + 1);
 //                         D_800D35DC = temp_s2;
 //                         D_800CC2BA = (u16)0;
-//                         phi_s3 = 0;
-//                         if ((D_800BE616 == 0) || (temp_v0 = func_1504C8BC(phi_s0), phi_s3 = temp_v0, phi_s2 = temp_s2, (temp_v0 != 0))) {
-//                             if ((s32) phi_s1 < (s32) D_8008FD8C) {
-//                                 temp_v0_2 = phi_s0->unk31C;
+//                         result = 0;
+//                         if ((D_800BE616 == 0) || (temp_v0 = func_1504C8BC(actor), result = temp_v0, actorNum = temp_s2, (temp_v0 != 0))) {
+//                             if ((s32) i < (s32) D_8008FD8C) {
+//                                 temp_v0_2 = actor->unk31C;
 //                                 temp_v0_2->unk195 = (s8) (temp_v0_2->unk195 - D_800BE9E4);
-//                                 temp_v0_3 = phi_s0->unk31C;
+//                                 temp_v0_3 = actor->unk31C;
 //                                 if ((s32) temp_v0_3->unk195 < 0) {
 //                                     temp_v0_3->unk195 = (u8)0;
 //                                 }
-//                                 phi_s0->unk31C->unk57 = (u8)0;
-//                                 if ((s32) phi_s1 < 4) {
-//                                     D_800CC284 = (s32) D_800BE728[phi_s1]; // * 4));
+//                                 actor->unk31C->unk57 = (u8)0;
+//                                 if ((s32) i < 4) {
+//                                     D_800CC284 = (s32) D_800BE728[i]; // * 4));
 //                                 } else {
 //                                     bzero(&sp5C, 6);
 //                                     D_800CC284 = &sp5C;
 //                                 }
 //                             }
-//                             temp_v0_4 = phi_s0->camera;
+//                             temp_v0_4 = actor->camera;
 //                             if (temp_v0_4 != 0) {
 //                                 temp_f0 = temp_v0_4->unk384;
 //                                 if (D_800991A8 == temp_f0) {
@@ -148,51 +132,51 @@ void func_1505327C(struct127 *arg0, f32 arg1, f32 arg2, s32 arg3, s32 arg4);
 //                             } else {
 //                                 D_800CC280 = 0;
 //                             }
-//                             if (phi_s0->unk127 != 0xFF) {
-//                                 func_150A11C4(phi_s0);
-//                             } else if (phi_s0->unkF8 & 0x400000) {
-//                                 func_150A278C(phi_s0);
+//                             if (actor->unk127 != 0xFF) {
+//                                 func_150A11C4(actor);
+//                             } else if (actor->unkF8 & 0x400000) {
+//                                 func_150A278C(actor);
 //                             }
-//                             phi_s0->unk2C = (f32) phi_s0->unk14;
-//                             phi_s0->unk30 = (f32) phi_s0->y_position;
-//                             phi_s0->unk34 = (f32) phi_s0->unk1C;
-//                             D_800CC27C = (s8) (((u32) phi_s0->unk184 >> 0x1C) & 7);
+//                             actor->unk2C = (f32) actor->unk14;
+//                             actor->unk30 = (f32) actor->y_position;
+//                             actor->unk34 = (f32) actor->unk1C;
+//                             D_800CC27C = (s8) (((u32) actor->unk184 >> 0x1C) & 7);
 //                             temp_f0_2 = D_800BE9A4;
-//                             phi_f20 = 2.0f;
+//                             dtMax = 2.0f;
 //                             if (D_800BE616 != 0) {
-//                                 phi_f20 = 2.0f;
+//                                 dtMax = 2.0f;
 //                                 if ((D_8008FDBC & 0x100) != 0) {
-//                                     phi_f20 = 5.0f;
+//                                     dtMax = 5.0f;
 //                                 }
 //                             }
-//                             phi_f0 = temp_f0_2;
-//                             if (phi_f20 < temp_f0_2) {
-//                                 phi_f0 = phi_f20;
+//                             dt = temp_f0_2;
+//                             if (dtMax < temp_f0_2) {
+//                                 dt = dtMax;
 //                             }
-//                             D_800D1550[0] = (f32) (phi_s0->unk48 * phi_f0);
+//                             D_800D1550[0] = (f32) (actor->unk48 * dt);
 //                             D_800CC264 = (s16) (s32) (D_800D1550[1364] * 100.0f); // wtf?
 //                             if ((s32) D_800CC27C >= 6) {
 //                                 D_800CC27C = (u8)0;
 //                             }
 //                             temp_v0_5 = (D_800B0DF0)->unk49;
 //                             if (temp_v0_5 != 0) {
-//                                 D_80086004[temp_v0_5](phi_s0);
+//                                 D_80086004[temp_v0_5](actor);
 //                             }
-//                             if ((phi_s0->unk25C & 0x200) == 0) {
-//                                 // temp_v0_6 = D_80086014[phi_s0->unk0];
-//                                 if (D_80086014[phi_s0->unk0] != 0) {
-//                                     D_80086014[phi_s0->unk0](phi_s0);
+//                             if ((actor->unk25C & 0x200) == 0) {
+//                                 // temp_v0_6 = D_80086014[actor->unk0];
+//                                 if (D_80086014[actor->unk0] != 0) {
+//                                     D_80086014[actor->unk0](actor);
 //                                 }
 //                             }
-//                             if (phi_s0->unk0 != 0) {
-//                                 func_1507E73C(phi_s0);
-//                                 func_1504AF10(phi_s0, 0, 0);
-//                                 if (((s32) phi_s1 < (s32) D_8008FD8C) && (D_800D18A8 == 0)) {
-//                                     func_15085710(phi_s0->unk127, 5, phi_s0->health);
+//                             if (actor->unk0 != 0) {
+//                                 func_1507E73C(actor);
+//                                 func_1504AF10(actor, 0, 0);
+//                                 if (((s32) i < (s32) D_8008FD8C) && (D_800D18A8 == 0)) {
+//                                     func_15085710(actor->unk127, 5, actor->health);
 //                                 }
 //                             }
-//                             phi_s0->unk2FF = (u8)1;
-//                             if (phi_s3 == 2) {
+//                             actor->unk2FF = (u8)1;
+//                             if (result == 2) {
 //                                 temp_t8 = D_800CC2BA;
 //                                 D_800BE9E4 = (s32) temp_t8;
 //                                 D_800BE9A4 = (f32) ((f32) temp_t8 * 0.5f);
@@ -203,14 +187,14 @@ void func_1505327C(struct127 *arg0, f32 arg1, f32 arg2, s32 arg3, s32 arg4);
 //                                     D_800BE9A8 = 0.0f;
 //                                 }
 //                             }
-//                             if ((phi_s0->unk14 != phi_s0->unk2C) || (phi_s0->unk18 != phi_s0->unk30) || (phi_s0->unk1C != phi_s0->unk34)) {
-//                                 phi_s0->unk300 = (u8)1;
+//                             if ((actor->unk14 != actor->unk2C) || (actor->unk18 != actor->unk30) || (actor->unk1C != actor->unk34)) {
+//                                 actor->unk300 = (u8)1;
 //                             }
 //                             temp_v0_7 = (D_800B0DF0)->unk4A;
-//                             phi_s2 = temp_s2;
+//                             actorNum = temp_s2;
 //                             if (temp_v0_7 != 0) {
-//                                 D_8008600C[temp_v0_7](phi_s0);
-//                                 phi_s2 = temp_s2;
+//                                 D_8008600C[temp_v0_7](actor);
+//                                 actorNum = temp_s2;
 //                             }
 //                         }
 //                     }
@@ -222,25 +206,25 @@ void func_1505327C(struct127 *arg0, f32 arg1, f32 arg2, s32 arg3, s32 arg4);
 //     }
 // //     temp_v1 = D_8008FD8C;
 // //     if ((s32) temp_v1 > 0) {
-// //         phi_a1 = &D_800CC2D0;
-// //         phi_t0 = 0;
-// //         phi_v1 = (s32) temp_v1;
+// //         cur = &D_800CC2D0;
+// //         j = 0;
+// //         numPlayers = (s32) temp_v1;
 // // loop_56:
-// //         if (phi_a1->unk0 != 0) {
-// //             temp_a0 = phi_a1->unk31C;
+// //         if (cur->unk0 != 0) {
+// //             temp_a0 = cur->unk31C;
 // //             if (temp_a0 != 0) {
-// //                 temp_a2 = &D_800CBDA0 + (phi_t0 * 2);
-// //                 if (phi_a1->unk137 != 0) {
+// //                 temp_a2 = &D_800CBDA0 + (j * 2);
+// //                 if (cur->unk137 != 0) {
 // //                     temp_a3 = *temp_a2;
 // //                     if (temp_a3 != 0) {
 // //                         temp_v0_8 = D_800DBEF4 + (temp_a3 * 0xA0);
 // //                         temp_v0_8->unk-51 = (u8) (temp_v0_8->unk-51 | 0x84);
 // //                         temp_v1_2 = D_800DBF94 + (*temp_a2 * 4);
-// //                         temp_v1_2->unk-4 = (s32) (temp_v1_2->unk-4 | (1 << phi_t0));
+// //                         temp_v1_2->unk-4 = (s32) (temp_v1_2->unk-4 | (1 << j));
 // //                     }
-// //                     phi_a1->unk31C->unk56 = (u8)5;
+// //                     cur->unk31C->unk56 = (u8)5;
 // // block_64:
-// //                     phi_v1 = (s32) D_8008FD8C;
+// //                     numPlayers = (s32) D_8008FD8C;
 // //                 } else {
 // //                     temp_v0_9 = temp_a0->unk56;
 // //                     if (temp_v0_9 != 0) {
@@ -250,10 +234,10 @@ void func_1505327C(struct127 *arg0, f32 arg1, f32 arg2, s32 arg3, s32 arg4);
 // //                 }
 // //             }
 // //         }
-// //         temp_t0 = phi_t0 + 1;
-// //         phi_a1 = phi_a1 + 0x32C;
-// //         phi_t0 = temp_t0;
-// //         if (temp_t0 < phi_v1) {
+// //         temp_t0 = j + 1;
+// //         cur = cur + 0x32C;
+// //         j = temp_t0;
+// //         if (temp_t0 < numPlayers) {
 // //             goto loop_56;
 // //         }
 // //     }
@@ -264,35 +248,27 @@ void func_1505327C(struct127 *arg0, f32 arg1, f32 arg2, s32 arg3, s32 arg4);
 //     D_800D35DC = (u8)0;
 // }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/game_77AD0/func_1504ADD0.s")
-// NON-MATCHING: whats up with sp48
+// PERMUTER CANDIDATE: structure byte-identical; saved-reg alloc tie-break (target
+// re-li's 0x77 & hoists &sp48; mine hoists 0x77) + -g3 buffer-slot layout. best 500.
+// permuter NO ZERO, best 350 (improved from 500/745 baseline)
 // void func_1504ADD0(void) {
-//     struct127 *tmp;
-//     s32 i;
-//     u8 *ptr;
-//     u8 *sp48;
-//
+//     struct127 *tmp; s32 i; u8 sp48[6];
 //     if (D_800C35EA != 1) {
 //         for (i = 0; i < 25; i++) {
 //             tmp = &D_800CC2D0[i];
-//             if (tmp->unk0 != 0) {
+//             if (tmp->interaction_state != 0) {
 //                 D_800C3E78 = i;
 //                 D_800D154C = tmp;
 //                 if (i < D_8008FD8C) {
-//                     if (i < 4) {
-//                         D_800CC284 = D_800BE728[i];
-//                     } else {
-//                         bzero(sp48, 6);
-//                         D_800CC284 = sp48;
-//                     }
+//                     if (i < 4) D_800CC284 = (*(s32 **) &D_800BE728)[i];
+//                     else { bzero(sp48, 6); D_800CC284 = (s32) sp48; }
 //                 }
-//                 if ((tmp->id == 0x28) || (tmp->id == 0x77)) {
-//                     func_150ED578(tmp);
-//                 }
+//                 if ((tmp->id == 0x28) || (tmp->id == 0x77)) func_150ED578(tmp);
 //             }
 //         }
 //     }
 // }
+#pragma GLOBAL_ASM("asm/nonmatchings/game_77AD0/func_1504ADD0.s")
 
 s32 func_1504AEF4(s32 arg0, s32 arg1) {
     if (arg0 == 0) {
@@ -302,10 +278,80 @@ s32 func_1504AEF4(s32 arg0, s32 arg1) {
 }
 
 // bleurgh
+// PERMUTER CANDIDATE: logic byte-identical (best 505, frame 0x30 + slot offsets + call
+// sequence all match); residual is ONE un-coalesced `move a0,t8` (kind = temp) plus the
+// register rotation it drags along. Best-known C (score 505):
+//     s32 handle, slot, kind, id;   /* declared in that order: 0x2c/0x28/0x24/0x20 */
+//     handle = arg0->unk92;
+//     if (handle == 0) return;
+//     if ((arg1 == 0) && ((handle >> 15) != 0)) return;
+//     id = handle & 0x7FFF;
+//     handle >>= 12;              /* blocks IDO sinking `id` to the call site */
+//     kind = handle & 7;
+//     ... (body below)
+// permuter NO ZERO, best 320 (improved from 821)
 #pragma GLOBAL_ASM("asm/nonmatchings/game_77AD0/func_1504AF10.s")
+// void func_1504AF10(struct127 *arg0, s32 arg1, s32 arg2) {
+//     s32 sp28, a0v, v1, a2v;
+//     v1 = arg0->unk92;
+//     if (v1 == 0) return;
+//     if ((arg1 == 0) && ((v1 >> 15) != 0)) return;
+//     a0v = (v1 >> 12) & 7;
+//     a2v = v1 & 0x7FFF;
+//     if (a0v == 0) {
+//         a0v = func_1504AEF4(a2v, (s32) &sp28);
+//         if (a0v != 0) arg0->unk92 = (a0v << 12) | sp28;
+//     }
+//     sp28 = arg0->unk92 & 0xFFF;
+//     if (a0v != 3) return;
+//     if (arg2 != 0) { D_800DBEF4[sp28].unk4E = 0; arg0->unk92 = 0; return; }
+//     D_800DBEF4[sp28].unk4E = (((s32)arg0 - (s32)D_800CC2D0) / (s32)sizeof(struct127)) + 0x64;
+//     if (arg1 != 0) { D_800DBEF4[sp28].unk4E = 0; return; }
+//     *(u8 *)&D_800DBEF4[sp28].unk4F &= 0xFF9F;
+//     *(u8 *)&D_800DBEF4[sp28].unk4F |= 0x20;
+//     D_800DBEF4[sp28].unk10 = arg0->x_position;
+//     D_800DBEF4[sp28].unk12 = arg0->y_position + (f32) *(s16 *)&arg0->unk90;
+//     D_800DBEF4[sp28].unk14 = arg0->z_position;
+// }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/game_77AD0/func_1504B0FC.s")
-#pragma GLOBAL_ASM("asm/nonmatchings/game_77AD0/func_1504BA38.s")
+extern s8 D_80099140[];
+extern f32 D_800991D4;
+void func_1504BA38(struct127 *arg0)
+{
+  struct temp1504BA38
+  {
+    s8 unk0;
+    s8 unk1;
+    s8 unk2;
+  };
+  struct temp1504BA38 *temp_v1;
+  s8 temp_a1;
+  int temp_v0;
+  if (arg0->unk28 > 10.0f)
+  {
+    arg0->unkCE = 0;
+    temp_v0 = temp_v1->unk1;
+    return;
+  }
+  temp_v1 = &((struct temp1504BA38 *) D_80099140)[arg0->unk184 & 0x1F];
+  temp_a1 = temp_v1->unk2;
+  if ((temp_a1 != 0) && (arg0->unkAA == 0))
+  {
+    arg0->unkAA = temp_a1;
+  }
+  temp_v0 = temp_v1->unk1;
+  if (temp_v0 == 0)
+  {
+    arg0->unkCE = temp_v1->unk0;
+    return;
+  }
+  arg0->unkCE = (s16) ((s32) ((((f32) temp_v0) * D_800991D4) * (((f32) temp_v1->unk0) - arg0->xz_velocity)));
+  if (!temp_a1)
+  {
+  }
+}
+
 // NON-MATCHING: starts to fall apart towards the end
 // void func_1504BA38(struct127 *arg0) {
 //     s8 temp_a1;
@@ -473,27 +519,54 @@ void func_1504C854(struct127 *arg0) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/game_77AD0/func_1504C8BC.s")
+s32 func_1504C8BC(struct127 *arg0) {
+    struct126 *v1 = arg0->unk31C;
+
+    if (v1 == 0) {
+        return 1;
+    }
+    if ((arg0->unk1D4 != 0) || (D_800BE9F0 == 0x33) || (arg0->interaction_state == 0x25)) {
+        ((u8 *)v1)[0x1A8] = 0;
+        return 1;
+    }
+    if ((arg0->unk127 & 1) == D_800CC2B8) {
+        if (((u8 *)v1)[0x1A8] != 0) {
+            *(s16 *)&D_800CC2BA = D_800BE9E4;
+            D_800BE9E4 += ((u8 *)arg0->unk31C)[0x1A8];
+            D_800BE9A4 = (f32) D_800BE9E4 * 0.5f;
+            if (D_800BE9A4 != 0.0f) {
+                D_800BE9A8 = 1.0f / D_800BE9A4;
+            } else {
+                D_800BE9A8 = 0.0f;
+            }
+            ((u8 *)arg0->unk31C)[0x1A8] = 0;
+            return 2;
+        }
+        return 1;
+    }
+    ((u8 *)v1)[0x1A8] = ((u8 *)v1)[0x1A8] + D_800BE9E4;
+    return 0;
+}
 
 void func_1504C9E4(struct127 *arg0, s8 arg1, u8 arg2) {
-    u8 phi_a2;
+    u8 step;
     s32 tmp0;
     s32 tmp1;
 
     tmp0 = (u8)(arg0->unk1D1 - arg1);
 
     if (tmp0) {
-        phi_a2 = 3;
+        step = 3;
         if (arg2 == 16) {
-            phi_a2 = 6;
+            step = 6;
         }
 
         tmp1 = tmp0;
         if (tmp0 >= 128) {
-            arg0->unk1D1 += phi_a2;
+            arg0->unk1D1 += step;
         }
         else {
-            arg0->unk1D1 -= phi_a2;
+            arg0->unk1D1 -= step;
         }
 
         tmp0 = tmp1;
@@ -505,12 +578,112 @@ void func_1504C9E4(struct127 *arg0, s8 arg1, u8 arg2) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/game_77AD0/func_1504CA60.s")
+void func_1504CA60(struct127 *arg0) {
+    f32 maxFallSpeed;
+    f32 temp_f2;
+
+    temp_f2 = arg0->unk180 + 20.0f;
+    arg0->unk1CC = arg0->y_position;
+    maxFallSpeed = 18.0f;
+    if (30.0f < arg0->unk28) {
+        maxFallSpeed = 80.0f;
+    }
+    if (arg0->unk81 != 0) {
+        maxFallSpeed = 80.0f;
+        temp_f2 -= 30.0f;
+        if ((arg0->unk28 < 5.0f) && (arg0->y_velocity < 0.0f)) {
+            arg0->unk81 = 0;
+            arg0->y_velocity = 45.0f;
+        }
+    } else if (arg0->unk28 < 20.0f) {
+        if ((func_150ADA20() & 0x3F) == 0) {
+            arg0->y_velocity = 25.0f;
+        }
+    }
+    func_15058EA4(arg0, temp_f2, 3.8f, temp_f2, -3.5f, 80.0f, -maxFallSpeed);
+    arg0->unk80 = 1;
+}
 #pragma GLOBAL_ASM("asm/nonmatchings/game_77AD0/func_1504CB98.s")
 #pragma GLOBAL_ASM("asm/nonmatchings/game_77AD0/func_150511E8.s")
 #pragma GLOBAL_ASM("asm/nonmatchings/game_77AD0/func_15051558.s")
-#pragma GLOBAL_ASM("asm/nonmatchings/game_77AD0/func_1505210C.s")
-#pragma GLOBAL_ASM("asm/nonmatchings/game_77AD0/func_15052260.s")
+f32 func_1505210C(struct127 *arg0, register f32 arg1, register f32 arg2, f32 *arg3, f32 arg4) {
+    f32 sp34;
+    s32 pad;
+    f32 sp2C;
+    f32 temp_f0;
+    f32 temp_f12;
+    f32 temp_f2;
+
+    arg2 = -arg2;
+    sp2C = arg0->unk40 * D_80099330;
+    sp34 = func_150AD780(sp2C);
+    temp_f0 = func_150AD78C(sp2C);
+    temp_f12 = (arg1 * sp34) + (arg2 * temp_f0);
+    arg2 = (-arg1 * temp_f0) + (arg2 * sp34);
+    arg1 = func_150484A0(temp_f12, 1.0f) * D_80099334;
+    temp_f2 = func_150484A0(arg2, 1.0f) * D_80099338;
+    arg2 = temp_f2;
+    if (arg1 >= 180.0f) {
+        arg1 -= 360.0f;
+    }
+    if (temp_f2 >= 180.0f) {
+        arg2 = temp_f2 - 360.0f;
+    }
+    temp_f0 = -arg4;
+    if (arg4 < arg1) {
+        arg1 = arg4;
+    }
+    if (arg1 < temp_f0) {
+        arg1 = temp_f0;
+    }
+    if (arg4 < arg2) {
+        arg2 = arg4;
+    }
+    if (arg2 < temp_f0) {
+        arg2 = temp_f0;
+    }
+    *arg3 = arg2;
+    return arg1;
+}
+extern f32 D_8009933C;
+extern f32 D_80099340;
+void func_1505A770(struct127 *);
+
+void func_15052260(struct127 *arg0) {
+    struct126 *v0 = arg0->unk31C;
+    f32 factor;
+
+    if ((v0->unk6B == 1) || (v0->unk6B == 3)) {
+        factor = D_8009933C;
+    } else {
+        factor = 1.0f;
+    }
+    arg0->unk1CC = arg0->y_position;
+
+    if (v0->unk6B < 4) {
+        arg0->x_position += ((f32) *(s16 *)((u8 *)v0 + 0x6C) - arg0->x_position) * factor;
+        arg0->y_position += ((f32) (*(s16 *)((u8 *)v0 + 0x6E) - 0x50) - arg0->y_position) * factor;
+        arg0->z_position += ((f32) *(s16 *)((u8 *)v0 + 0x70) - arg0->z_position) * factor;
+        func_1505E650(arg0, 0x14, 1.0f, 6.0f, 0.0f, 0.0f, 0);
+        arg0->y_velocity = -10.0f;
+    } else {
+        if ((s32) arg0->unk28 == 0) {
+            v0->unk6B = 0;
+        } else {
+            func_1505E650(arg0, 0x38, 1.0f, 6.0f, 0.0f, 0.0f, 0);
+        }
+        func_1505A770(arg0);
+    }
+
+    arg0->gravity = D_80099340;
+    if (arg0->y_position < arg0->unk118) {
+        arg0->gravity = 0.0f;
+        arg0->y_velocity = 0.0f;
+        arg0->unk31C->unk6B = 0;
+        arg0->unk83 = 0;
+        arg0->in_water = 1;
+    }
+}
 
 void func_15052408(struct127 *arg0) {
     arg0->unkB2 = 0;
@@ -566,8 +739,88 @@ void func_1505250C(struct127 *arg0, s32 arg1) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/game_77AD0/func_15052590.s")
-#pragma GLOBAL_ASM("asm/nonmatchings/game_77AD0/func_15052760.s")
+void func_15052590(struct127 *arg0) {
+    s32 temp_v0;
+    f32 temp_f0;
+
+    temp_v0 = arg0->unk25C;
+    if (temp_v0 & 0x80) {
+        arg0->unk25C = temp_v0 & ~0x80;
+        func_150AFC68(D_800C3E78, 3, 0x3FC, 6, 0xFF, 0);
+        func_150AFC68(D_800C3E78, 2, 0x3FC, 6, 0xFF, 0);
+    }
+
+    if ((D_800C35EA != 1) || ((*((u8 *) &D_800C3654) != 0) && (func_150229E4(arg0) == 0))) {
+        func_15053750(arg0);
+        func_1504BB88(arg0);
+        arg0->unk80 = 0xA;
+
+        if (arg0->stunned == 0) {
+            func_15056B08(arg0);
+        } else if (arg0->unk13D == 0) {
+            func_150585F0(arg0, 0.05000000074505806f);
+        }
+
+        arg0->unk40 = ((s16) (arg0->unk7A + 0x4000)) * 0.005493164f;
+        func_15059140(arg0);
+
+        if ((arg0->unk28 == 0.0f) && ((arg0->unk184 & 0x1F) == 0xE)) {
+            arg0->health = 0;
+        }
+
+        func_150597FC(arg0);
+
+        if (arg0->unk13D != 0) {
+            func_150562FC(arg0);
+        } else {
+            temp_f0 = arg0->unkC4;
+            arg0->unkC4 += (0.0f - temp_f0) * D_80099344;
+        }
+
+        func_15054F74(arg0);
+        if (func_150535F4(arg0) == 0) {
+            func_1502178C(arg0, 0, -1);
+        }
+    }
+}
+extern f32 D_80099348;
+extern f32 D_8009934C;
+void func_15052760(struct127 *arg0, s16 arg1) {
+    s32 v0;
+    s32 id;
+    s8 temp;
+    f32 f0;
+
+    arg1 = (arg1 & 0xFFFF) - arg0->unk76;
+    v0 = (arg1 * 100) / D_800CC264;
+    id = arg0->id;
+
+    if (id != 0x29) {
+        if (id == 8) {
+            return;
+        }
+    }
+    if (arg0->unk22C & 8) {
+        return;
+    }
+    f0 = D_80099348;
+    arg1 = 7;
+    if (id == 0xA) {
+        arg1 = 0x28;
+    }
+    if (arg0->unk226 == 0xFF) {
+        temp = v0 >> 8;
+        if ((arg0->unk87 ^ temp) & 0x80) {
+            v0 = 0;
+        }
+        f0 = D_8009934C;
+        arg1 = 4;
+        arg0->unk87 = temp;
+    }
+    if (arg0->unk1E5 != 0) {
+        arg0->unkC4 += ((f32)(v0 / (arg0->unk1E5 * arg1)) - arg0->unkC4) * f0;
+    }
+}
 #pragma GLOBAL_ASM("asm/nonmatchings/game_77AD0/func_150528C8.s")
 
 void func_15052EF0(struct127 *arg0) {
@@ -596,33 +849,33 @@ struct127 *func_15052F58(s32 arg0, s32 arg1) {
 //     u8 idx;
 //     struct127 *temp_a0;
 //     struct05 *temp_v0;
-//     s32 phi_a1;
-//     s8 phi_v1;
-//     struct127 *phi_a0;
-//     // f32 phi_return;
+//     s32 entryId;
+//     s8 holdState;
+//     struct127 *target;
+//     // f32 ret;
 //
 //     sp3C = 0;
-//     phi_a1 = -1;
+//     entryId = -1;
 //     if (arg0->id == 72) {
 //         sp40 = -1;
 //         temp_v0 = func_15033E84(arg0, -1);
-//         phi_a1 = -1;
+//         entryId = -1;
 //         if (temp_v0 != 0) {
-//             phi_a1 = temp_v0->unk6;
+//             entryId = temp_v0->unk6;
 //         }
 //     }
 //     idx = arg0->unk124;
 //     temp_a0 = &D_800CC2D0[idx];
 //     if (arg8 == 0) {
-//         // phi_return = idx; // bitwise (f32)
+//         // ret = idx; // bitwise (f32)
 //         if (temp_a0->y_position < (arg0->y_position + (arg1 * arg0->unk150))) {
-//             // phi_return = 0.0f;
+//             // ret = 0.0f;
 //             if (temp_a0->y_velocity < 0.0f) { // stick an || here
 //                 arg0->unk13C = (idx + 0x64);
 //                 if (arg9 != 0) {
 //                     D_800D1580 = arg9;
-//                     sp40 = phi_a1;
-//                     func_1506E5FC(temp_a0, phi_a1);
+//                     sp40 = entryId;
+//                     func_1506E5FC(temp_a0, entryId);
 //                 }
 //                 D_800CC2D0[idx].unk1CC = D_800CC2D0[idx].y_position;
 //                 D_800CC2D0[idx].unk76 = arg0->unk7A;
@@ -631,49 +884,49 @@ struct127 *func_15052F58(s32 arg0, s32 arg1) {
 //                     D_800CC2D0[idx].y_velocity = 0.0f;
 //                     arg0->y_velocity = 0.0f;
 //                     if (arg0->id == 0x48) {
-//                         phi_v1 = (s8) 2;
-//                         if (phi_a1 == 0x7A) {
+//                         holdState = (s8) 2;
+//                         if (entryId == 0x7A) {
 //                             arg0->unk65 = (arg0->unk124 + 1);
 //                             arg0->unk5C = arg2;
 //                             arg0->unk101 = (arg0->unk101 | arg3);
 //                             func_1505E650(&D_800CC2D0[idx], 5, 1.0f, 0.0f, 0.0f, 0.0f, 0);
 //                             func_15083568(&D_800CC2D0[idx], 0x79, 1.0f, 0);
 //                             sp3C = 1;
-//                             phi_v1 = (s8) 2;
+//                             holdState = (s8) 2;
 //                         }
 //                     } else {
 //                         arg0->unk150 = 0.75f;
 //                         D_800CC2D0[idx].y_position = arg0->y_position;
-//                         phi_v1 = 1;
+//                         holdState = 1;
 //                         if (D_800BE9F0 == 6) {
-//                             phi_v1 = 0x81;
+//                             holdState = 0x81;
 //                         }
 //                     }
 //                     D_800CC2D0[idx].unk76 = arg0->unk7A;
 //                     D_800CC2D0[idx].unk78 = arg0->unk7A;
 //                     D_800CC2D0[idx].unk7A = arg0->unk7A;
 //                     D_800CC2D0[idx].unk40 = (s16) (arg0->unk7A + 0x4000) * 0.005493164f;
-//                     D_800CC2D0[idx].unk31C->unk4E = phi_v1;
+//                     D_800CC2D0[idx].unk31C->unk4E = holdState;
 //                     D_800CC2D0[idx].unk83 = 0;
 //                     D_800CC2D0[idx].disable_run = 0;
-//                     phi_a0 = &D_800CC2D0[idx];
-//                     // phi_return = arg0->unk7A; // bitwise ( f32)
+//                     target = &D_800CC2D0[idx];
+//                     // ret = arg0->unk7A; // bitwise ( f32)
 //                 } else {
 //                     D_800CC2D0[idx].unk65 = D_800C3E78 + 1;
 //                     D_800CC2D0[idx].unk5C = arg2;
 //                     D_800CC2D0[idx].disable_run = 0;
 //                     D_800CC2D0[idx].unk101 =  (D_800CC2D0[idx].unk101 | arg3);
-//                     phi_a0 = &D_800CC2D0[idx];
+//                     target = &D_800CC2D0[idx];
 //                 }
-//                 phi_a0->immune =  arg6;
-//                 phi_a0->unk239 = arg7;
-//                 phi_a0->unk31C->unk27 = 0;
+//                 target->immune =  arg6;
+//                 target->unk239 = arg7;
+//                 target->unk31C->unk27 = 0;
 //                 arg0->unk218 = 0;
 //                 arg0->unk232 =  arg5;
 //                 if (arg4 != 0) {
-//                     temp_ret = func_1506160C(phi_a0, 1, 0, 0, 0);
-//                     phi_a0->unk101 = (u8) (phi_a0->unk101 | 0x40);
-//                     // phi_return = temp_ret;
+//                     temp_ret = func_1506160C(target, 1, 0, 0, 0);
+//                     target->unk101 = (u8) (target->unk101 | 0x40);
+//                     // ret = temp_ret;
 //                 }
 //             }
 //         }
@@ -681,10 +934,10 @@ struct127 *func_15052F58(s32 arg0, s32 arg1) {
 //     //    goto block_6;
 //     }
 //     if (sp3C != 0) {
-//         // phi_return =
+//         // ret =
 //         func_15060F28(arg0, 0);
 //     }
-//     // return phi_return;
+//     // return ret;
 // }
 
 
@@ -724,6 +977,28 @@ struct127 *func_15052F58(s32 arg0, s32 arg1) {
 // }
 
 s32 func_15053430(void);
+// PERMUTER CANDIDATE: body byte-identical (best 213); only the tail differs — target emits a
+// separate epilogue reached via `b` plus a dead `move v0,zero` (trailing return 0) that IDO
+// drops from the hand-written source. Reconstruction (needs param passthrough on caller):
+// permuter NO ZERO (baseline rebuilt as 1892, perm best 400; s0-vs-a3 arg home + spill order)
+// s32 func_15053430(struct127 *arg0) {
+//     u8 flags; s32 t1; s32 unk10E;
+//     if (arg0->id == 0xFF) { func_15060F28(arg0, 1); return 1; }
+//     unk10E = arg0->unk10E;
+//     flags = D_800D1C90[arg0->id]->data.i.unk0;
+//     if ((unk10E != 0) && (unk10E < 0xF0)) { func_1505D2B8(arg0, 9); return 0; }
+//     t1 = 0;
+//     if ((unk10E < 0xF0) && (flags & 0x20))
+//         func_151669A0((s32)arg0->x_position, (s32)(arg0->y_position + 50.0f), (s32)arg0->z_position, 0.5f, 0xFF, 0);
+//     if (flags & 4) t1 = func_1507D754(arg0);
+//     if (flags & 2) { arg0->interaction_state = 0x2A; return 1; }
+//     if (flags & 0x80) { func_15055B0C(arg0, 0x4B0); return 1; }
+//     if (flags & 1) { func_15053694(arg0); return 1; }
+//     if (flags & 0x40) { (*(s16 **)&D_800D2110)[arg0->unk13F] = 0x4E2; func_15060F28(arg0, 1); return 1; }
+//     if (t1 == 1) { func_150536D0(arg0); return 1; }
+//     if (t1 == 0) func_15060F28(arg0, 1);
+//     return 1;
+// }
 #pragma GLOBAL_ASM("asm/nonmatchings/game_77AD0/func_15053430.s")
 
 s32 func_150535F4(struct127 *arg0) {
@@ -766,8 +1041,41 @@ void func_1505371C(struct127 *arg0) {
     arg0->unk40 = ((s16) (arg0->unk7A + 16384)) * 0.005493164f;
 }
 
-// ???
-#pragma GLOBAL_ASM("asm/nonmatchings/game_77AD0/func_15053750.s")
+void func_15053750(struct127 *arg0) {
+    f32 temp_f2;
+    f32 temp_f16;
+    s32 sign;
+
+    temp_f2 = arg0->unk154 - arg0->xz_scale;
+    if (temp_f2 != 0.0f) {
+        temp_f16 = arg0->unk15C;
+        if (fabsf(temp_f2) < temp_f16) {
+            func_15062BDC(arg0, arg0->unk154, arg0->y_scale);
+        } else {
+            if (temp_f2 < 0.0f) {
+                sign = -1;
+            } else {
+                sign = 1;
+            }
+            func_15062BDC(arg0, ((f32) sign * temp_f16) + arg0->xz_scale, arg0->y_scale);
+        }
+    }
+
+    temp_f2 = arg0->unk158 - arg0->y_scale;
+    if (temp_f2 != 0.0f) {
+        temp_f16 = arg0->unk15C;
+        if (fabsf(temp_f2) < temp_f16) {
+            func_15062BDC(arg0, arg0->xz_scale, arg0->unk158);
+        } else {
+            if (temp_f2 < 0.0f) {
+                sign = -1;
+            } else {
+                sign = 1;
+            }
+            func_15062BDC(arg0, arg0->xz_scale, ((f32) sign * temp_f16) + arg0->y_scale);
+        }
+    }
+}
 
 void func_15053894(struct127 *arg0) {
     arg0->unk7F += 1;
@@ -783,25 +1091,25 @@ void func_150548D8(s32 arg0) {
 
 void func_150548E4(struct127 *arg0) {
     struct127 *temp_s0;
-    struct127 *phi_s2;
-    s32 phi_v0;
+    struct127 *other;
+    s32 soundId;
     s32 i;
 
     temp_s0 = &D_800CC2D0[arg0->unk65 - 1];
 
     for (i = 0; i < D_8008FD8C; i++) {
-        phi_s2 = &D_800CC2D0[i];
+        other = &D_800CC2D0[i];
 
-        if ((phi_s2->unk274 == (((s32) ((s32)arg0 - (s32)D_800CC2D0) / (s32)sizeof(struct127)) + 1)) && (temp_s0->unk232 == 1)) {
+        if ((other->unk274 == (((s32) ((s32)arg0 - (s32)D_800CC2D0) / (s32)sizeof(struct127)) + 1)) && (temp_s0->unk232 == 1)) {
             temp_s0->unk218 = 0;
             if ((func_150ADA20() & 1) != 0) {
                 temp_s0->unk232 = (u8)2U;
-                phi_v0 = 0x1DB;
+                soundId = 0x1DB;
             } else {
                 temp_s0->unk232 = (u8)3U;
-                phi_v0 = 0x1DC;
+                soundId = 0x1DC;
             }
-            func_10010344(phi_v0, temp_s0, 0x7D00, 0x1F4, 0x9C4);
+            func_10010344(soundId, temp_s0, 0x7D00, 0x1F4, 0x9C4);
         }
     }
 }
@@ -822,57 +1130,41 @@ void func_15054A5C(struct127 *arg0, struct127 *arg1) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/game_77AD0/func_15054A94.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/game_77AD0/func_15054F74.s")
+// PERMUTER CANDIDATE (best 715). Every instruction is reproduced and the stack frame
+// (0x58) + local slot offsets (sp50/sp4C/sp48) match; the residual is a coupled
+// register-allocation web inside the id==0x4B arm: the target keeps D_800CC2D0's base in
+// v0 (hoisted above the beq) with arg0->unk84.uh in t7 and targetYaw/arg0->unk7A in v1/a0,
+// while IDO gives us the mirror colouring. Reading unk84 into a named local fixes its
+// (otherwise far too late) schedule but then claims v0, which pushes the D_800CC2D0
+// lui/addiu below the branch. Reconstruction below (logic verified against the asm):
 // void func_15054F74(struct127 *arg0) {
-//     s16 phi_v1;
-//
-//     f32 sp50;
-//     f32 sp4C;
-//     f32 sp48;
-//
-//     f32 temp_f2;
-//     f32 temp_f0;
-//
+//     s16 targetYaw; u16 temp_t7; f32 sp50, sp4C, sp48, temp_f2, temp_f0;
 //     if (arg0->id == 12) {
 //         if ((D_800C3E78 + 1) != D_800CC2D0[arg0->unk124].unk65) {
-//             if (arg0->unk232 == 18) {
-//                 func_15052F9C(arg0, 50.f, 0, 4, 0, 12, 0, 8, 0, 0);
-//             } else if ((D_800CC268 & 1) != 0) {
-//                 if ((arg0->unk25C & 0x400) != 0) {
-//                     arg0->unk124 = 0;
-//                     func_1505327C(arg0, 39.0f, 3.0f, 18, 0);
-//                 }
-//             }
+//             if (arg0->unk232 == 18) func_15052F9C(arg0, 50.0f, 0, 4, 0, 12, 0, 8, 0, 0);
+//             else if ((D_800CC268 & 1) != 0)
+//                 if ((arg0->unk25C & 0x400) != 0) { arg0->unk124 = 0; func_1505327C(arg0, 39.0f, 3.0f, 18, 0); }
 //         }
-//     } else {
-//         if (arg0->id == 0x4B) {
-//             func_1505A184(arg0->unk7A ^ 0x8000, 500.0f, 0, &sp50, &sp48, &sp4C);
-//             temp_f0 = arg0->unk14;
-//             temp_f2 = arg0->unk1C;
-//             arg0->unk2EC = (((s32) ((f32) (s16) (s32) temp_f0 + sp50) << 0x10) | ((s32) ((f32) (s16) (s32) temp_f2 + sp48) & 0xFFFF));
-//             if (arg0->unk84.uh  != 0xF) {
-//                 phi_v1 = func_1505A630(D_800CC2D0->unk14 - temp_f0, temp_f2 - D_800CC2D0->unk1C, 0);
-//             } else {
-//                 phi_v1 = (s16) (arg0->unk7A - 0x800);
-//             }
-//             arg0->unk7A += (s16) (phi_v1 - arg0->unk7A) / 3;
-//             arg0->unk14C = 2.0f;
-//             arg0->unk150 = 2.0f;
-//             arg0->unk40 = 90.0f;
-//         } else if (((arg0->id == 0x1B) || ((arg0->id == 0x7E))) && (arg0->unk2E4 != 0)) {
-//             if (D_800BE616 != 0) {
-//                 func_1508B20C(arg0->unk14, arg0->unk18, 500.0f, 900.0f);
-//             }
-//             if ((arg0->unk2E4 > D_800BE9E4) && (arg0->unk2E4 >= 0x78) && (arg0->unk2E4 < (D_800BE9E4 + 0x78))) {
-//                 func_10010154(0x3A1, arg0, 0x7D00, 0x1F4, 0x3E8);
+//     } else if (arg0->id == 0x4B) {
+//         func_1505A184(arg0->unk7A ^ 0x8000, 500.0f, 0.0f, &sp50, &sp48, &sp4C);
+//         temp_f0 = arg0->x_position; temp_f2 = arg0->z_position; temp_t7 = arg0->unk84.uh;
+//         arg0->unk2EC = ((s32)((f32)(s16)(s32)temp_f0 + sp50) << 0x10) | ((s32)((f32)(s16)(s32)temp_f2 + sp48) & 0xFFFF);
+//         if (temp_t7 != 0xF) targetYaw = func_1505A630(D_800CC2D0->x_position - temp_f0, temp_f2 - D_800CC2D0->z_position, 0);
+//         else targetYaw = arg0->unk7A - 0x800;
+//         arg0->unk7A += (s16)(targetYaw - arg0->unk7A) / 3;
+//         arg0->xz_scale = 2.0f; arg0->y_scale = 2.0f; arg0->unk40 = 90.0f;
+//     } else if ((arg0->id == 0x1B) || (arg0->id == 0x7E)) {
+//         if (arg0->unk2E4 != 0) {
+//             if (D_800BE616 != 0) func_1508B20C(arg0->x_position, arg0->y_position, arg0->z_position, 900.0f);
+//             if (arg0->unk2E4 > D_800BE9E4) {
+//                 if ((arg0->unk2E4 >= 0x78) && (arg0->unk2E4 < (D_800BE9E4 + 0x78)))
+//                     func_10010154(0x3A1, arg0, 0x7D00, 0x1F4, 0x3E8);
 //                 arg0->unk2E4 -= D_800BE9E4;
-//             } else {
-//                 arg0->unk232 = 6U;
-//                 arg0->unk218 = 0;
-//             }
+//             } else { arg0->unk232 = 6; arg0->unk218 = 0; }
 //         }
 //     }
 // }
+#pragma GLOBAL_ASM("asm/nonmatchings/game_77AD0/func_15054F74.s")
 
 void func_15055260(s32 arg0, s32 arg1, s32 arg2) {
     func_150335C8(arg0, arg1, 0x4D, arg2, 0, 0);
@@ -902,8 +1194,8 @@ void func_15055260(s32 arg0, s32 arg1, s32 arg2) {
 //     u8 temp_v1;
 //     s32 temp_a0;
 //     struct108 *temp_a0_2;
-//     f32 phi_f0;
-//     s32 phi_a2;
+//     f32 ratio;
+//     s32 alpha;
 //
 //     sp74 = (u16)arg0->unk278;
 //     sp6C = 0;
@@ -991,14 +1283,14 @@ void func_15055260(s32 arg0, s32 arg1, s32 arg2) {
 //             arg0->xz_velocity = 0.0f;
 //             arg0->unk18 = (*(f32*)&arg0->unk180 + sp70);
 //             if (temp_f0 != 0.0f) {
-//                 phi_f0 = (arg0->unk18 - temp_f12) / temp_f0;
+//                 ratio = (arg0->unk18 - temp_f12) / temp_f0;
 //             } else {
-//                 phi_f0 = 0.0f;
+//                 ratio = 0.0f;
 //             }
 //             temp_f2 = arg0->unk2C;
 //             temp_f12 = arg0->unk34;
-//             arg0->unk14 = temp_f2 + ((arg0->unk14 - temp_f2) * phi_f0);
-//             arg0->unk1C = temp_f12 + ((arg0->unk1C - temp_f12) * phi_f0);
+//             arg0->unk14 = temp_f2 + ((arg0->unk14 - temp_f2) * ratio);
+//             arg0->unk1C = temp_f12 + ((arg0->unk1C - temp_f12) * ratio);
 //         } else if (arg0->unk18 < arg0->unk118) {
 //             arg0->gravity = 0.0f;
 //             arg0->y_velocity = 0.0f;
@@ -1030,14 +1322,14 @@ void func_15055260(s32 arg0, s32 arg1, s32 arg2) {
 //
 //     temp_v1 = arg0->unk7F;
 //     if (temp_v0 < 0xA) {
-//         phi_a2 = (s32) (temp_v0 * 0xFF) / 0xA;
+//         alpha = (s32) (temp_v0 * 0xFF) / 0xA;
 //     } else {
-//         phi_a2 = 0xFF;
+//         alpha = 0xFF;
 //         if (temp_v1 >= 0x15) {
-//             phi_a2 = (s32) ((-(s32) temp_v1 * 0xFF) + 0x1DE2) / 0xA;
+//             alpha = (s32) ((-(s32) temp_v1 * 0xFF) + 0x1DE2) / 0xA;
 //         }
 //     }
-//     func_1503192C(arg0, sp74, phi_a2, 0);
+//     func_1503192C(arg0, sp74, alpha, 0);
 //     if (sp74 == 0x1F) {
 //         temp_a0_2 = D_800DBFF0;
 //         temp_f0 = temp_a0_2->unk2F8 - arg0->unk14;
@@ -1054,16 +1346,16 @@ void func_15055260(s32 arg0, s32 arg1, s32 arg2) {
 // }
 
 void func_15055A2C(s32 arg0, f32 arg1, f32 arg2, f32 arg3, s32 arg4) {
-    s32 phi_a0 = 1549;
-    s32 phi_v1 = 1000;
+    s32 soundId = 1549;
+    s32 minDist = 1000;
 
     if (arg4 == 1) {
-        phi_a0 = 1549;
-        phi_v1 = 100;
+        soundId = 1549;
+        minDist = 100;
     } else {
-        phi_a0 = D_8009919C[func_150ADA20() % 6U];
+        soundId = D_8009919C[func_150ADA20() % 6U];
     }
-    func_10010F88(phi_a0, 32700, func_150ADA20() % 500U, 0, 0, arg1,  arg2, arg3, phi_v1, 3000);
+    func_10010F88(soundId, 32700, func_150ADA20() % 500U, 0, 0, arg1,  arg2, arg3, minDist, 3000);
 }
 
 void func_15055B0C(struct127 *arg0, s32 arg1) {
@@ -1105,7 +1397,6 @@ void func_15055C88(struct127 *arg0) {
     }
     arg0->unk31C->unk36 = 100;
     func_1506160C(arg0, 2, 0, 6, 0);
-    if (0) {};
     arg0->disable_run = 200;
     arg0->unk83 = 200;
     arg0->unk1CC = D_80099418;

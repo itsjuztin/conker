@@ -222,7 +222,28 @@ void func_15040A6C(s32 arg0) {
 // contains delay slot
 #pragma GLOBAL_ASM("asm/nonmatchings/game_6D800/func_15040A78.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/game_6D800/func_15040CC8.s")
+void func_15040CC8(u8 *arg0) {
+    s32 i;
+    s32 offset;
+    s32 addr;
+    s32 temp;
+    void (**table)(s32);
+
+    for (i = 0; i < 16; i++) {
+    }
+
+    table = D_800844B0;
+    for (i = -20; i < 10; i = (i + 1) | 0) {
+        offset = i << 3;
+        addr = (s32) (offset + arg0);
+        table[*(u8 *) addr](addr);
+    }
+
+    temp = D_800848B0;
+    if (temp != 0) {
+        func_1500390C(temp);
+    }
+}
 // NON-MATCHING: todo
 // void func_15040CC8(s32 *arg0) {
 //     s32 temp_a0_2;

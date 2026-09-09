@@ -67,24 +67,27 @@ f32 func_15048864(f32 arg0) {
     return (arg0 < 0.0f) ? (255.0f - temp_f14) : temp_f14;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/game_75C90/func_150488C8.s")
-// NON-MATCHING: needs more work
-// f32 func_150488C8(f32 arg0) {
-//     f32 temp_f16;
-//     f32 temp_f2;
-//     s32 index;
-//     f32 phi_f0;
-//     f32 phi_f16;
-//
-//
-//     index = temp_f2 = fabsf(arg0) * D_8009900C;
-//     phi_f16 = D_80098E00[index];
-//
-//     phi_f0 = (index < 255) ? D_80098E00[index+1] : D_80099010;
-//
-//     temp_f16 = ((((phi_f0 - phi_f16) * (temp_f2 - (f32)index)) + phi_f16) * D_80099014) / 65536.0f;
-//     if (arg0 < 0.0f) {
-//         return -temp_f16;
-//     }
-//     return temp_f16;
-// }
+f32 func_150488C8(f32 arg0) {
+    f32 temp_f2;
+    f32 temp_f14;
+    f32 temp_f16;
+    f32 next;
+    s32 index;
+
+    temp_f2 = fabsf(arg0) * D_8009900C;
+    index = temp_f2;
+    temp_f14 = temp_f2 - (f32)index;
+    temp_f16 = (u32)D_80098E00[index];
+
+    if (index < 255) {
+        next = (u32)D_80098E00[index + 1];
+    } else {
+        next = D_80099010;
+    }
+
+    temp_f16 = ((((next - temp_f16) * temp_f14) + temp_f16) * D_80099014) / 65536.0f;
+    if (arg0 < 0.0f) {
+        return -temp_f16;
+    }
+    return temp_f16;
+}
