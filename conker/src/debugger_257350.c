@@ -27,9 +27,15 @@ typedef struct {
 
 extern u8 D_16003CB8[];
 extern u8 D_16003CCC[];
+extern u8 D_16004870[];
+extern u8 D_16004874[];
 extern u8 D_16004878[];
 extern u32 D_1600487C[];
+extern double D_16004828[];
+extern double D_16004950;
 extern s32 func_16001BB4(s32 (*arg0)(u8 *, u8 *, u32), u8 *arg1, u8 *arg2, va_list arg3);
+s16 func_16002D2C(s16 *arg0, struct05 *arg1);
+void func_16002DE4(DebuggerPft *px, u8 code, u8 *p, s16 nsig, s16 xexp);
 void func_1600288C(DebuggerPft *px, u8 code);
 void func_160033A8(DebuggerPft *px, u8 code);
 
@@ -324,132 +330,122 @@ void func_160021FC(DebuggerPft *px, va_list *pap, u8 code, u8 *ac) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/debugger_257350/func_1600288C.s")
-// REVERSED: Libultra _Ldtob(DebuggerPft *px, u8 code) (1,184 bytes, 296 instrs)
-// Floating-point double-to-string converter. Unscales double-precision mantissa via
-// _Ldunscale (func_16002D2C), checks NaN (D_16004874) and Inf (D_16004870), scales by powers
-// of 10 from D_16004828, generates 8-digit decimal chunks using ldiv into 32-byte buffer at 0xB8($sp),
-// rounds via drop-digit detection, and delegates to _Genld (func_16002DE4).
-// Control flow, unscaling logic, and digit generation match byte-exact.
-// void func_1600288C(DebuggerPft *px, u8 code) {
-//     char buff[0x20];
-//     char *p;
-//     double dval;
-//     s16 err;
-//     s16 nsig;
-//     s16 xexp;
-// 
-//     p = buff;
-//     dval = px->v.d;
-// 
-//     if (px->prec < 0) {
-//         px->prec = 6;
-//     } else if (px->prec == 0 && (code == 'g' || code == 'G')) {
-//         px->prec = 1;
-//     }
-// 
-//     err = func_16002D2C(&xexp, &px->v.d);
-//     if (err > 0) {
-//         func_16001AD0(px->s, (err == 2) ? D_16004874 : D_16004870, px->n1 = 3);
-//         return;
-//     } else if (err == 0) {
-//         nsig = 0;
-//         xexp = 0;
-//     } else {
-//         {
-//             s32 i;
-//             s32 n;
-// 
-//             if (dval < 0.0) {
-//                 dval = -dval;
-//             }
-// 
-//             if ((xexp = (xexp * 30103) / 100000 - 4) < 0) {
-//                 n = (-xexp + 3) & ~3;
-//                 xexp = -n;
-// 
-//                 for (i = 0; n > 0; n >>= 1, i++) {
-//                     if (n & 1) {
-//                         dval *= D_16004828[i];
-//                     }
-//                 }
-//             } else if (xexp > 0) {
-//                 double factor = 1.0;
-// 
-//                 xexp &= ~3;
-// 
-//                 for (n = xexp, i = 0; n > 0; n >>= 1, i++) {
-//                     if (n & 1) {
-//                         factor *= D_16004828[i];
-//                     }
-//                 }
-// 
-//                 dval /= factor;
-//             }
-//         }
-//         {
-//             s32 gen = px->prec + ((code == 'f') ? 10 + xexp : 6);
-// 
-//             if (gen > 19) {
-//                 gen = 19;
-//             }
-// 
-//             for (*p++ = '0'; gen > 0 && dval > 0.0; p += 8) {
-//                 s32 j;
-//                 s32 lo = (s32)dval;
-// 
-//                 if ((gen -= 8) > 0) {
-//                     dval = (dval - lo) * 1e8;
-//                 }
-// 
-//                 for (p += 8, j = 8; lo > 0 && --j >= 0;) {
-//                     ldiv_t qr;
-//                     qr = ldiv(lo, 10);
-//                     *--p = qr.rem + '0';
-//                     lo = qr.quot;
-//                 }
-// 
-//                 while (--j >= 0) {
-//                     *--p = '0';
-//                 }
-//             }
-// 
-//             gen = p - &buff[1];
-// 
-//             for (p = &buff[1], xexp += 7; *p == '0'; p++) {
-//                 --gen;
-//                 --xexp;
-//             }
-// 
-//             nsig = px->prec + ((code == 'f') ? xexp + 1 : ((code == 'e' || code == 'E') ? 1 : 0));
-// 
-//             if (gen < nsig) {
-//                 nsig = gen;
-//             }
-// 
-//             if (nsig > 0) {
-//                 u8 drop = (nsig < gen && p[nsig] >= '5') ? '9' : '0';
-//                 s32 n;
-// 
-//                 for (n = nsig; p[--n] == drop;) {
-//                     --nsig;
-//                 }
-// 
-//                 if (drop == '9') {
-//                     ++p[n];
-//                 }
-// 
-//                 if (n < 0) {
-//                     --p;
-//                     ++nsig;
-//                     ++xexp;
-//                 }
-//             }
-//         }
-//     }
-// 
-//     func_16002DE4(px, code, (u8 *)p, nsig, xexp);
-// }
+// Libultra _Ldtob(DebuggerPft *px, u8 code) (1,184 bytes, 296 instrs)
+// Floating-point double-to-string converter.
+void func_1600288C(DebuggerPft *px, u8 code) {
+    u8 buff[0x20];
+    int i;
+    u8 *p;
+    short err;
+    short nsig;
+    double new_var;
+    float fzero;
+    double dval;
+    short xexp;
+
+    dval = px->v.d;
+    p = buff;
+    fzero = 0.0f;
+    new_var = fzero;
+
+    if (px->prec < 0) {
+        px->prec = 6;
+    } else if (px->prec == 0 && (code == 'g' || code == 'G')) {
+        px->prec = 1;
+    }
+
+    err = func_16002D2C(&xexp, (struct05 *)&px->v.d);
+    if (err > 0) {
+        func_16001AD0(px->s, (err == 2) ? D_16004870 : D_16004874, px->n1 = 3);
+        return;
+    } else if (err == 0) {
+        nsig = 0;
+        xexp = 0;
+    } else {
+        {
+            int i;
+            int n;
+
+            if (dval < new_var) {
+                dval = -dval;
+            }
+
+            if ((xexp = ((xexp * 30103) / 100000) - 4) < 0) {
+                n = ((-xexp) + 3) & (~3);
+                xexp = -n;
+                for (i = 0; n > 0; n >>= 1, i++) {
+                    if (n & 1) {
+                        dval *= D_16004828[i];
+                    }
+                }
+            } else {
+                float new_var3 = 1.0f;
+                if (xexp > 0) {
+                    double factor = new_var3;
+                    xexp &= ~3;
+                    for (n = xexp, i = 0; n > 0; n >>= 1, i++) {
+                        if (n & 1) {
+                            factor *= D_16004828[i];
+                        }
+                    }
+                    dval /= factor;
+                }
+            }
+        }
+        {
+            int gen = px->prec + ((code == 'f') ? (10 + xexp) : (6));
+            if (gen > 19) {
+                gen = 19;
+            }
+
+            for (*(p++) = '0'; (gen > 0) && (dval > new_var); p += 8) {
+                int j;
+                long lo = (s32)dval;
+
+                if ((gen -= 8) > 0) {
+                    dval = (dval - lo) * D_16004950;
+                }
+
+                for (p += 8, j = 8; (lo > 0) && ((--j) >= 0);) {
+                    ldiv_t qr;
+                    qr = ldiv(lo, 10);
+                    *(--p) = qr.rem + '0';
+                    lo = qr.quot;
+                }
+
+                while ((--j) >= 0) {
+                    *(--p) = '0';
+                }
+            }
+
+            gen = p - (&buff[1]);
+            for (p = &buff[1], xexp += 7; (*p) == '0'; p++) {
+                --gen, --xexp;
+            }
+
+            nsig = px->prec + ((code == 'f') ? (xexp + 1) : (((code == 'e') || (code == 'E')) ? (1) : (0)));
+            if (gen < nsig) {
+                nsig = gen;
+            }
+
+            if (nsig > 0) {
+                int n;
+                u8 drop = ((nsig < gen) && (p[nsig] >= '5')) ? ('9') : ('0');
+                for (n = nsig; p[--n] == drop;) {
+                    --nsig;
+                }
+
+                if (drop == '9') {
+                    ++p[n];
+                }
+                if (0, n < 0) {
+                    --p, ++nsig, ++xexp;
+                }
+            }
+        }
+    }
+    func_16002DE4(px, code, (u8 *)p, nsig, xexp);
+}
 
 s16 func_16002D2C(s16 *arg0, struct05 *arg1) {
     s16 temp_v1 = (arg1->unk0 & 0x7FF0) >> 4;
