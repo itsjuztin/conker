@@ -5,6 +5,7 @@
 
 s32 func_1600160C();
 s32 func_160014F0();
+s32 func_16001B34();
 
 typedef struct {
     s32 unk0;
@@ -601,26 +602,28 @@ s32 func_16000A5C(void) {
 // 
 //     return 0;
 // }
-#pragma GLOBAL_ASM("asm/nonmatchings/debugger/debugger/func_16000F8C.s")
-// NON-MATCHING: best score 77. The floating point exception logic and format calls are byte-exact.
-// IDO 5.3 with -g3 allocates an unused 8-byte debug home on the stack for named local variables,
-// resulting in a 0x60 frame size instead of 0x58. Logic verified.
-// void func_16000F8C(s32 arg0, f32 arg1) {
-//     char buf[0x2C];
-//     s32 bits;
-// 
-//     if ((arg0 >= (D_160038A0 << 5)) && (arg0 < 833)) {
-//         bits = *(s32 *)&arg1;
-//         if (((u32)(bits & 0x7F800000) >> 23) - 1U >= 0xFEU) {
-//             if ((u32)(bits << 1) != 0) {
-//                 func_160012B0(arg0, D_160047D0);
-//                 return;
-//             }
-//         }
-//         func_16001B34((u8 *)buf, D_160047D4, D_160047DC, D_160047E0, (f64)arg1);
-//         func_160012B0(arg0, (u8 *)buf);
-//     }
-// }
+void func_16000F8C(s32 arg0, f32 arg1) {
+    union { f32 f; u32 u; } u;
+    char buf[0x2C];
+    register u32 val;
+
+    if ((arg0 >= (D_160038A0 << 5)) && (arg0 < 833)) {
+        u.f = arg1;
+        val = u.u;
+        if ((((val & 0x7F800000) >> 23) != 0) && (((val & 0x7F800000) >> 23) < 255)) {
+            goto format;
+        }
+        if ((val << 1) == 0 * (val << 1)) {
+            goto format;
+        }
+        func_160012B0(arg0, D_160047D0);
+        return;
+format:
+        func_16001B34((u8 *)buf, D_160047D4, D_160047DC, D_160047E0, (f64)arg1);
+        func_160012B0(arg0, (u8 *)buf);
+    }
+}
+
 
 #pragma GLOBAL_ASM("asm/nonmatchings/debugger/debugger/func_16001044.s")
 // REVERSED: draw_number(pos, mode, val) — unified number renderer for hex, dec, and float.
