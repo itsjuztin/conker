@@ -2,6 +2,7 @@
 
 #include "libc/stdarg.h"
 #include "libc/stdlib.h"
+#include "libc/string.h"
 #include "functions.h"
 #include "variables.h"
 
@@ -25,15 +26,21 @@ typedef struct {
     u8 qual;
 } DebuggerPft;
 
+extern u8 D_16003C70[];
+extern u8 D_16003C94[];
 extern u8 D_16003CB8[];
 extern u8 D_16003CCC[];
+extern u8 D_16004800[];
+extern u8 D_16004804[];
+extern u32 D_1600480C[];
 extern u8 D_16004870[];
 extern u8 D_16004874[];
 extern u8 D_16004878[];
 extern u32 D_1600487C[];
 extern double D_16004828[];
 extern double D_16004950;
-extern s32 func_16001BB4(s32 (*arg0)(u8 *, u8 *, u32), u8 *arg1, u8 *arg2, va_list arg3);
+s32 func_16001BB4(s32 (*pfn)(u8 *, u8 *, u32), u8 *arg, u8 *fmt, va_list ap);
+void func_160021FC(DebuggerPft *px, va_list *pap, u8 code, u8 *ac);
 s16 func_16002D2C(s16 *arg0, struct05 *arg1);
 void func_16002DE4(DebuggerPft *px, u8 code, u8 *p, s16 nsig, s16 xexp);
 void func_1600288C(DebuggerPft *px, u8 code);
@@ -92,122 +99,192 @@ s32 func_16001B8C(u8 *arg0, u8 *arg1, u32 arg2) {
     return func_16001AD0(arg0, arg1, arg2) + arg2;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/debugger_257350/func_16001BB4.s")
-// REVERSED: Libultra _Printf(pfn, arg, fmt, ap) (1,608 bytes, 402 instrs)
-// Top-level vsnprintf formatting engine loop. Scans format string for '%' specifiers,
-// parses flags (' ', '+', '-', '#', '0') using D_16004804/D_16004810, dynamic field width ('*'),
-// dynamic precision ('.*'), and length qualifiers ('h', 'l', 'L'). Dispatches to _Putfld
-// (func_160021FC) and streams formatted chunks through the pfn callback with spaces (D_16003C70)
-// and zeroes (D_16003C94) padding. 224-byte stack frame (-0xE0) and all 10 callee-saved
-// registers ($s0-$s7, $fp, $ra) match byte-exact.
-// s32 func_16001BB4(s32 (*pfn)(u8 *, u8 *, u32), u8 *arg, u8 *fmt, va_list ap) {
-//     DebuggerPft x;
-//     x.nchar = 0;
-// 
-//     while (1) {
-//         u8 *s;
-//         u8 c;
-//         u8 ac[32];
-//         s = fmt;
-// 
-//         for (c = *s; c != 0 && c != '%';) {
-//             c = *++s;
-//         }
-// 
-//         PUT(fmt, s - fmt);
-// 
-//         if (c == 0) {
-//             return x.nchar;
-//         }
-// 
-//         fmt = ++s;
-// 
-//         x.flags = 0;
-//         while (1) {
-//             int found = 0;
-//             int i;
-//             for (i = 0; D_16004804[i] != 0; i++) {
-//                 if (D_16004804[i] == *s) {
-//                     x.flags |= D_16004810[i];
-//                     found = 1;
-//                     break;
-//                 }
-//             }
-//             if (!found) {
-//                 break;
-//             }
-//             s++;
-//         }
-// 
-//         if (*s == '*') {
-//             x.width = va_arg(ap, int);
-//             if (x.width < 0) {
-//                 x.width = -x.width;
-//                 x.flags |= 4; // FLAGS_MINUS
-//             }
-//             s++;
-//         } else {
-//             for (x.width = 0; isdigit(*s); ++s) {
-//                 if (x.width < 999) {
-//                     x.width = x.width * 10 + *s - '0';
-//                 }
-//             }
-//         }
-// 
-//         if (*s != '.') {
-//             x.prec = -1;
-//         } else if (*++s == '*') {
-//             x.prec = va_arg(ap, int);
-//             ++s;
-//         } else {
-//             for (x.prec = 0; isdigit(*s); s++) {
-//                 if (x.prec < 999) {
-//                     x.prec = x.prec * 10 + *s - '0';
-//                 }
-//             }
-//         }
-// 
-//         if (*s == 'h' || *s == 'l' || *s == 'L') {
-//             x.qual = *s++;
-//         } else {
-//             x.qual = 0;
-//         }
-// 
-//         if (x.qual == 'l' && *s == 'l') {
-//             x.qual = 'L';
-//             ++s;
-//         }
-// 
-//         func_160021FC(&x, &ap, *s, ac);
-//         x.width -= x.n0 + x.nz0 + x.n1 + x.nz1 + x.n2 + x.nz2;
-// 
-//         {
-//             if (!(x.flags & 4)) {
-//                 int i, j;
-//                 if (x.width > 0) {
-//                     i = j = x.width;
-//                     for (; j > 0; j -= i) {
-//                         i = (32 < (unsigned int)j) ? 32 : j;
-//                         PUT(D_16003C70, i);
-//                     }
-//                 }
-//             }
-// 
-//             PUT(ac, x.n0);
-//             PAD(D_16003C94, x.nz0);
-//             PUT(x.s, x.n1);
-//             PAD(D_16003C94, x.nz1);
-//             PUT(x.s + x.n1, x.n2);
-//             PAD(D_16003C94, x.nz2);
-// 
-//             if (x.flags & 4) {
-//                 PAD(D_16003C70, x.width);
-//             }
-//         }
-//         fmt = s + 1;
-//     }
-//     return 0;
-// }
+s32 func_16001BB4(s32 (*pfn)(u8 *, u8 *, u32), u8 *arg, u8 *fmt, va_list ap) {
+    DebuggerPft x;
+    char pad[12];
+    u8 ac[32];
+    u8 *s;
+    int c;
+    const u8 *t;
+
+    x.nchar = 0;
+    while (1) {
+        c = *fmt;
+        s = fmt + 1;
+        while (c > 0) {
+            if ((c ^ 0) == '%') {
+                s--;
+                break;
+            }
+            c = *(s++);
+        }
+
+        if (0 < (s - fmt)) {
+            if ((arg = (u8 *)(*pfn)(arg, fmt, s - fmt)) != NULL) {
+                x.nchar += s - fmt;
+            } else {
+                return x.nchar;
+            }
+        }
+
+        if (c == 0) {
+            return x.nchar;
+        }
+
+        s++;
+        for (x.flags = 0; (t = (const u8 *)strchr((const char *)D_16004804, *s)) != NULL; s++) {
+            x.flags |= D_1600480C[t - D_16004804];
+        }
+
+        if (*s == '*') {
+            x.width = va_arg(ap, int);
+            if (x.width < 0) {
+                x.width = -x.width;
+                x.flags |= 0x04;
+            }
+            s++;
+        } else {
+            for (x.width = 0; (*s >= '0') && (*s <= '9'); ++s) {
+                if (x.width < 999) {
+                    x.width = ((x.width * 10) + *s) - '0';
+                }
+            }
+        }
+
+        if (*s != '.') {
+            x.prec = -1;
+        } else if (*(++s) == '*') {
+            x.prec = va_arg(ap, int);
+            ++s;
+        } else {
+            for (x.prec = 0; (*s >= '0') && (*s <= '9'); s++) {
+                if (x.prec < 999) {
+                    x.prec = ((x.prec * 10) + *s) - '0';
+                }
+            }
+        }
+
+        x.qual = ((t = (const u8 *)strchr((const char *)D_16004800, *s)) != NULL) ? *(s++) : '\0';
+        if ((x.qual == 'l') && (*s == 'l')) {
+            x.qual = 'L';
+            ++s;
+        }
+
+        func_160021FC(&x, &ap, *s, ac);
+        x.width -= ((((x.n0 + x.nz0) + x.n1) + x.nz1) + x.n2) + x.nz2;
+        {
+            if (!(x.flags & 0x04)) {
+                int i;
+                int j;
+                if (x.width > 0) {
+                    i = j = x.width;
+                    for (; j > 0; j -= i) {
+                        i = (32 < (unsigned int)j) ? 32 : j;
+                        if (0 < i) {
+                            if ((arg = (u8 *)(*pfn)(arg, D_16003C70, i)) != NULL) {
+                                x.nchar += i;
+                            } else {
+                                return x.nchar;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (0 < x.n0) {
+                if ((arg = (u8 *)(*pfn)(arg, ac, x.n0)) != NULL) {
+                    x.nchar += x.n0;
+                } else {
+                    return x.nchar;
+                }
+            }
+
+            if (0 < x.nz0) {
+                int i;
+                int j = x.nz0;
+                for (; 0 < j; j -= i) {
+                    i = (32 < (unsigned int)j) ? 32 : j;
+                    if (0 < i) {
+                        if ((arg = (u8 *)(*pfn)(arg, D_16003C94, i)) != NULL) {
+                            x.nchar += i;
+                        } else {
+                            return x.nchar;
+                        }
+                    }
+                }
+            }
+
+            if (0 < x.n1) {
+                if ((arg = (u8 *)(*pfn)(arg, x.s, x.n1)) != NULL) {
+                    x.nchar += x.n1;
+                } else {
+                    return x.nchar;
+                }
+            }
+
+            if (0 < x.nz1) {
+                int i;
+                int j = x.nz1;
+                for (; 0 < j; j -= i) {
+                    i = (32 < (unsigned int)j) ? 32 : j;
+                    if (0 < i) {
+                        if ((arg = (u8 *)(*pfn)(arg, D_16003C94, i)) != NULL) {
+                            x.nchar += i;
+                        } else {
+                            return x.nchar;
+                        }
+                    }
+                }
+            }
+
+            if (0 < x.n2) {
+                if ((arg = (u8 *)(*pfn)(arg, x.s + x.n1, x.n2)) != NULL) {
+                    x.nchar += x.n2;
+                } else {
+                    return x.nchar;
+                }
+            }
+
+            if (0 < x.nz2) {
+                int i;
+                int j = x.nz2;
+                for (; 0 < j; j -= i) {
+                    i = (32 < (unsigned int)j) ? 32 : j;
+                    if (0 < i) {
+                        if ((arg = (u8 *)(*pfn)(arg, D_16003C94, i)) != NULL) {
+                            x.nchar += i;
+                        } else {
+                            return x.nchar;
+                        }
+                    }
+                }
+            }
+
+            if (x.flags & 0x04) {
+                if (0 < x.width) {
+                    int i;
+                    int j = x.width;
+                    for (; 0 < j; j -= i) {
+                        i = (32 < (unsigned int)j) ? 32 : j;
+                        if (0 < i) {
+                            if ((arg = (u8 *)(*pfn)(arg, D_16003C70, i)) != NULL) {
+                                x.nchar += i;
+                            } else {
+                                return x.nchar;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        fmt = ++s;
+scan_next: ;
+        c = *fmt;
+    }
+
+    return 0;
+}
 
 void func_160021FC(DebuggerPft *px, va_list *pap, u8 code, u8 *ac) {
     s32 strLen;
