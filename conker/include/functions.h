@@ -838,6 +838,7 @@ void func_1600030C(void);
 void func_16000314(void);
 s32  func_16000384(void);
 void func_16000424(struct118 *arg0);
+void func_16000590(struct118 *arg0);
 void func_160012B0(s32 arg0, u8 *arg1);
 void func_16001338(u8 arg0, u8 arg1, u8 arg2);
 s32  func_160016F4(s32 arg0);

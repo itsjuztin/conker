@@ -1393,6 +1393,7 @@ extern u8   D_16003AF4;
 extern s8   D_16003B1C;
 extern s32  D_16003B20[]; // array containing 0x20 structs?
 extern s8   D_16003B28;
+extern u8  *D_16003B30[];
 extern s32  D_16003B4C;
 extern struct118 *D_1600389C; // array or struct?
 
@@ -1411,6 +1412,8 @@ extern u8   D_16004734[];
 extern u8   D_16004738[];
 extern u8   D_16004740[];
 extern u8   D_16004748[];
+extern u8   D_160047A4[];
+extern u8   D_160047AC[];
 extern u8   D_160047B0[];
 extern u8   D_160047BC[];
 extern u8   D_160047C0[];

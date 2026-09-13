@@ -176,56 +176,49 @@ void func_16000424(struct118 *arg0) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/debugger/debugger/func_16000590.s")
-// NON-MATCHING: score 1532 (register allocation only). Target uses 6 saved registers (s0-s5),
-// promoting arg0 to s5 (move s5, a0) to keep it live across the FPCSR check loop and page selection.
-// IDO spills arg0 to 0x30(sp) when compiled from C. Logic is 100% verified.
-// void func_16000590(struct118 *arg0) {
-//     s32 s0;
-//     s32 s1;
-//     u32 s2;
-//     s32 *s3;
-//     s32 s4;
-//     s32 v0;
-//
-//     s4 = 0;
-//     s2 = arg0->unk12C;
-//     func_160012B0(3, D_160047A4);
-//     func_16001044(0xA, 0, s2);
-//
-//     s2 >>= 12;
-//     s0 = 0x2C;
-//     s1 = 0;
-//     do {
-//         if (s2 & 1) {
-//             func_160012B0(s0, D_16003B30[s1]);
-//             s0 += 0x20;
-//         }
-//         s1++;
-//         s2 >>= 1;
-//     } while (s1 < 6);
-//
-//     s1 = 0;
-//     s0 = 0xC3;
-//     if (D_16003B28 == 1) {
-//         v0 = 0x4C;
-//     } else {
-//         v0 = 0x6C;
-//         s4 = 0x10;
-//     }
-//     s2 = s1 + s4;
-//     s3 = (s32 *)arg0 + v0;
-//     s4 = (s32)D_160047AC;
-//     do {
-//         func_160012B0(s0, (u8 *)s4);
-//         func_16001044(s0 + 2, 1, s2);
-//         func_16001044(s0 + 5, 2, s3[1]);
-//         s1++;
-//         s3 += 2;
-//         s0 += 0x20;
-//         s2++;
-//     } while (s1 < 16);
-// }
+void func_16000590(struct118 *arg0) {
+    u32 s2;
+    s32 s4;
+    s32 s0;
+    s32 s1;
+    s32 s3;
+    s32 v0;
+
+    s4 = 0;
+    s2 = arg0->unk12C;
+    func_160012B0(3, D_160047A4);
+    func_16001044(0xA, 0, s2);
+    s2 >>= 12;
+    s0 = 0x2C;
+    s1 = 0; do { if (s2 & 1) {
+            func_160012B0(s0, D_16003B30[s1]);
+            s0 += 0x20;
+        }
+        s1 += 1;
+        s2 >>= 1;
+    } while (s1 < 6);
+
+    s1 = 0;
+    s0 = 0xC3;
+    if (D_16003B28 == 1) {
+        v0 = 0x4C;
+    } else {
+        v0 = 0x6C;
+        s4 = 0x10;
+    }
+    s2 = (s1 & 0xFFFFFFFF) + s4;
+    s3 = ((s32)arg0) + (v0 * 4); do {
+        func_160012B0(s0, D_160047AC);
+        func_16001044(s0 + 2, 1, s2);
+        func_16001044(s0 + 5, 2, ((s32 *)s3)[1]);
+        s1 += 1;
+        s3 += 8;
+        s0 += 0x20;
+        if (!arg0) {
+        }
+        s2 += 1;
+    } while (s1 < 0x10);
+}
 
 void func_160006CC(struct118 *arg0) {
     func_160006CC_sp3C sp3C;

@@ -823,6 +823,8 @@ typedef struct {
     s32 unk11C;
     s32 unk120;
     s32 unk124;
+    u8  pad128[0x4];
+    s32 unk12C;
 } struct118;
 
 struct struct119 {
