@@ -4,6 +4,7 @@
 #include "variables.h"
 
 s32 func_1600160C();
+s32 func_160014F0();
 
 typedef struct {
     s32 unk0;
@@ -11,6 +12,7 @@ typedef struct {
 
 extern u8 D_160037F0;
 extern func_160006CC_sp3C D_16003B48;
+extern u8 D_16003CE0[];
 
 void func_160006CC(struct118 *arg0);
 
@@ -761,57 +763,58 @@ void func_16001390(s16 arg0, s16 arg1, register s16 arg2, s16 arg3)
   }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/debugger/debugger/func_160014F0.s")
-// NON-MATCHING: best score 40 (JUSTREG register swap between t0/a3 for glyph/outer setup).
-// Declaring arg1 as `u8` reproduces the exact entry `sw a1, 4(sp); andi t6, a1, 0xFF; move a1, t6`
-// param-narrowing sequence. The unrolled 4-pixel inner loop and row advance match byte-for-byte.
-// s32 func_160014F0(s32 arg0, u8 arg1) {
-//     u16 *v0;
-//     u16 fg;
-//     s32 c;
-//     u8 *glyph;
-//     s32 outer;
-//     s32 inner;
-//     u16 bits;
-//     u16 pixel;
-//
-//     v0 = (u16 *)arg0;
-//     fg = D_1600388C;
-//     c = arg1;
-//     inner = arg1 < 0x20;
-//     if (inner) {
-//         c = 0x20;
-//     }
-//     outer = 0, glyph = &D_16003CE0[(c - 0x20) << 3];
-//     do {
-//         inner = 0;
-//         bits = *glyph;
-//         do {
-//             pixel = (bits & 0x80) ? fg : 1;
-//             bits = (u16)(bits << 1);
-//             *v0++ = pixel;
-//
-//             pixel = (bits & 0x80) ? fg : 1;
-//             bits = (u16)(bits << 1);
-//             *v0++ = pixel;
-//
-//             pixel = (bits & 0x80) ? fg : 1;
-//             bits = (u16)(bits << 1);
-//             *v0++ = pixel;
-//
-//             pixel = (bits & 0x80) ? fg : 1;
-//             bits = (u16)(bits << 1);
-//             *v0++ = pixel;
-//
-//             inner += 4;
-//         } while (inner != 8);
-//         outer++;
-//         glyph++;
-//         v0 += D_160038A8 - 8;
-//     } while (outer != 8);
-//
-//     return arg0 + 0x10;
-// }
+s32 func_160014F0(arg0, arg1)
+s32 arg0;
+u8 arg1;
+{
+    u16 *v0;
+    u16 fg;
+    s32 c;
+    u8 *glyph;
+    s32 outer;
+    s32 inner;
+    u16 bits;
+    u16 pixel;
+
+    v0 = (u16 *)arg0;
+    fg = D_1600388C;
+    c = arg1;
+    inner = arg1;
+    outer = inner;
+    if (outer < 0x20) {
+        c = 0x20;
+    }
+    glyph = &D_16003CE0[(c - 0x20) << 3];
+    outer = 0;
+    do {
+        inner = 0;
+        bits = *glyph;
+        do {
+            pixel = (bits & 0x80) ? fg : 1;
+            bits = (u16)(bits << 1);
+            *v0++ = pixel;
+
+            pixel = (bits & 0x80) ? fg : 1;
+            bits = (u16)(bits << 1);
+            *v0++ = pixel;
+
+            pixel = (bits & 0x80) ? fg : 1;
+            bits = (u16)(bits << 1);
+            *v0++ = pixel;
+
+            pixel = (bits & 0x80) ? fg : 1;
+            bits = (u16)(bits << 1);
+            *v0++ = pixel;
+
+            inner += 4;
+        } while (inner != 8);
+        outer++;
+        glyph++;
+        v0 += D_160038A8 - 8;
+    } while (outer != 8);
+
+    return arg0 + 0x10;
+}
 
 // splat into framebuffer
 s32 func_1600160C(s32 arg0) {
