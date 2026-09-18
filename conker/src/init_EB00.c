@@ -36,6 +36,8 @@ typedef struct {
 
 s32 func_1000ECCC(struct_init_EB00_1000ECCC *arg0, s32 arg1, s32 arg2, s32 arg3,
                   s32 arg4, s32 arg5, u16 *arg6);
+s32 func_1000EDA0(struct_init_EB00_1000ECCC *arg0, s32 arg1, s32 arg2, s32 arg3,
+                  s32 arg4, s32 arg5, u16 *arg6);
 
 s32 func_1000EB00(struct04 *arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg6, s32 arg7, u16 *arg8) {
     if (arg0->unk24 != 0) {
@@ -151,31 +153,33 @@ s32 func_1000ECCC(struct_init_EB00_1000ECCC *arg0, s32 arg1, s32 arg2, s32 arg3,
 //     return 0;
 // }
 
-// PERMUTER CANDIDATE / JUSTREG (best 65). Byte-perfect instruction stream; the
-// hoisted `and (temp_v1 & 0xFFFF0000)` at 0x304 colors to t0 (mine) vs t9 (target),
-// shifting every downstream temp by one. Sibling of matched func_1000ECCC; differs
-// only by the unguarded func_10010630 call, which perturbs the global coloring.
-// Tried OR/AND operand swaps (65/70). Needs permuter to shift the temp rotation.
-// s32 func_1000EDA0(struct_init_EB00_1000ECCC *arg0, s32 arg1, s32 arg2, s32 arg3,
-//                   s32 arg4, s32 arg5, u16 *arg6) {
-//     s16 temp_a1; s16 temp_t4; s32 temp_v1;
-//     temp_v1 = arg0->unk18.w;
-//     temp_a1 = temp_v1;
-//     if (*arg6 != 0) {
-//         arg0->unk18.w = (*arg6 << 16) | (temp_v1 & 0xFFFF);
-//         arg0->unk0 = 0; *arg6 = 0; temp_v1 = arg0->unk18.w;
-//     }
-//     temp_a1 -= D_800BE9E4;
-//     temp_t4 = temp_v1 >> 16;
-//     if (temp_a1 <= 0) {
-//         *arg6 = temp_t4; arg0->unk0 = temp_t4;
-//         func_10010630(*arg6, arg0->unk1C, arg0->unkC, arg0->unkA, arg0->unk8);
-//         return 1;
-//     }
-//     arg0->unk18.w = (temp_v1 & 0xFFFF0000) | temp_a1;
-//     return 0;
-// }
-#pragma GLOBAL_ASM("asm/nonmatchings/init_EB00/func_1000EDA0.s")
+s32 func_1000EDA0(struct_init_EB00_1000ECCC *arg0, s32 arg1, s32 arg2, s32 arg3,
+                  s32 arg4, s32 arg5, u16 *arg6) {
+    s16 temp_a1;
+    u16 temp_t4;
+    s32 temp_v1;
+
+    temp_v1 = arg0->unk18.w;
+    temp_a1 = temp_v1;
+    if (*arg6 != 0) {
+        arg0->unk18.w = (*arg6 << 16) | (temp_v1 & 0xFFFF);
+        arg0->unk0 = 0;
+        *arg6 = 0;
+        temp_v1 = arg0->unk18.w;
+    }
+
+    temp_a1 -= D_800BE9E4;
+    temp_t4 = temp_v1 >> 16;
+    if (temp_a1 <= 0) {
+        *arg6 = temp_t4;
+        arg0->unk0 = temp_t4;
+        func_10010630(*arg6, arg0->unk1C, arg0->unkC, arg0->unkA, arg0->unk8);
+        return 1;
+    }
+
+    arg0->unk18.w = (temp_v1 & 0xFFFF0000) | temp_a1;
+    return 0;
+}
 
 // PERMUTER CANDIDATE (best 1650). Body is byte-correct (float trunc block, all casts
 // match: unk1C & 0xFF -> lw+andi, (u32)unk184 -> srl). Blocked by the return-placement /
@@ -183,25 +187,39 @@ s32 func_1000ECCC(struct_init_EB00_1000ECCC *arg0, s32 arg1, s32 arg2, s32 arg3,
 // target emits `beqzl obj, EPILOGUE; li v0,1` guards (return value in v0 delay slot),
 // but IDO gives `bnezl obj, continue` with the next load hoisted into the delay, forcing
 // the return value into v1 + a trailing `move v0,v1` that cascades a v0/v1 swap on every
-// obj access. Tried early-return / || / single-return-var / inverted-guard: 1650-1990.
-// typedef struct { u8 pad0[2]; s16 unk2; s16 unk4; s16 unk6; u8 pad8[0x10];
-//     struct127 *unk18; s32 unk1C; u8 pad20[4]; u16 unk24; } struct_init_EB00_EE70;
-// s32 func_1000EE70(struct_init_EB00_EE70 *arg0, s32 arg1, s32 *arg2, s32 arg3,
-//                   s32 arg4, s32 *arg5) {
-//     struct127 *obj = arg0->unk18;
-//     if (obj == 0) { return 1; }
-//     if (*arg2 == 0) { return 1; }
-//     if ((obj->interaction_state != 0) && (obj->unique_id == (arg0->unk1C & 0xFF))) {
-//         *arg5 = (((u32) obj->unk184 >> 3) & 0x30) << 1;
-//         arg0->unk2 = (s16) obj->x_position;
-//         arg0->unk4 = (s16) obj->y_position;
-//         arg0->unk6 = (s16) obj->z_position;
-//         return 0;
-//     }
-//     if (func_1000F44C(arg0->unk24) != 0) { return 1; }
-//     return 0;
-// }
-#pragma GLOBAL_ASM("asm/nonmatchings/init_EB00/func_1000EE70.s")
+typedef struct {
+    u8 pad0[2];
+    s16 unk2;
+    s16 unk4;
+    s16 unk6;
+    u8 pad8[0x10];
+    struct127 *unk18;
+    s32 unk1C;
+    u8 pad20[4];
+    u16 unk24;
+} struct_init_EB00_EE70;
+
+s32 func_1000EE70(struct_init_EB00_EE70 *arg0, s32 arg1, s32 *arg2, s32 arg3, s32 arg4, s32 *arg5) {
+    struct127 *obj;
+    u8 uid;
+
+    if ((obj = arg0->unk18) != 0) {
+        if (*arg2 != 0) {
+            uid = arg0->unk1C & 0xFF;
+            if ((obj->interaction_state != 0) && (uid == obj->unique_id)) {
+                *arg5 = (((u32) obj->unk184 >> 3) & 0x30) << 1;
+                arg0->unk2 = (s16) obj->x_position;
+                arg0->unk4 = (s16) obj->y_position;
+                arg0->unk6 = (s16) obj->z_position;
+                return 0;
+            }
+            if (func_1000F44C(arg0->unk24) == 0) {
+                return 0;
+            }
+        }
+    }
+    return 1;
+}
 
 s32 func_1000EF40(struct57 *arg0, struct57 *arg1, s32 *arg2, s32 arg3, s32 arg4, s32 arg5, u16 *arg6) {
     if (arg0->unk10 & 0x80) {
@@ -443,7 +461,38 @@ u16 func_1000FA64(u16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4,
 //         }
 //     }
 // }
-#pragma GLOBAL_ASM("asm/nonmatchings/init_EB00/func_1000FC18.s")
+void func_1000FC18(u16 arg0, s16 arg1, s16 arg2, s16 arg3, u16 arg4) {
+    s32 temp_s2;
+    s32 temp_s3;
+    s32 temp_s4;
+    s32 temp_s5;
+    s32 i;
+    struct15 *ptr;
+    u16 temp_a0;
+
+    temp_s2 = arg0;
+    temp_s3 = arg1;
+    temp_s4 = arg2;
+    temp_s5 = arg3;
+    i = 0;
+    if (D_80042760 > 0) {
+        do {
+            ptr = &D_80041FE0[i];
+            if ((temp_s2 == *(u16 *)((s32)ptr + 0)) &&
+                (temp_s3 == *(s16 *)((s32)ptr + 2)) &&
+                (temp_s4 == *(s16 *)((s32)ptr + 4)) &&
+                (temp_s5 == *(s16 *)((s32)ptr + 6)) &&
+                (arg4 == (*(u16 *)((s32)ptr + 8) & 0x7FFF))) {
+                temp_a0 = D_80041FE0[i].unk24;
+                if ((unsigned int)temp_a0 != 0) {
+                    func_100111C8(temp_a0);
+                }
+                D_80041FE0[i].unk10 |= 0x80;
+            }
+            i++;
+        } while (i < D_80042760);
+    }
+}
 void func_1000FD38(s32 arg0, s32 arg1, s32 arg2) {
     s32 i;
 

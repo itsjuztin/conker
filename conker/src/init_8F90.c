@@ -468,4 +468,52 @@ s32 func_10009FFC(void) {
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/init_8F90/func_1000A03C.s")
-#pragma GLOBAL_ASM("asm/nonmatchings/init_8F90/func_1000A348.s")
+void func_1000A348(void) {
+    struct54 *temp_v0;
+    struct54 *temp_v1;
+    struct54 *temp_a0;
+    volatile struct54 *temp_a1;
+    struct54 *temp_a2;
+
+    temp_v0 = (struct54 *)D_800406A0.unk4;
+    if (temp_v0 != NULL) {
+        do {
+            temp_v1 = temp_v0->unk0;
+            if ((temp_v0->unk14 == 0) && (temp_v0->unk16 == 0)) {
+                temp_a0 = (struct54 *)temp_v0->unkC;
+                temp_a0->unk0 = temp_v0->unk8;
+                temp_v0->unkC = NULL;
+                if ((s32)temp_v0 == D_800406A0.unk4) {
+                    D_800406A0.unk4 = (s32)temp_v1;
+                }
+                temp_a0 = temp_v0->unk0;
+                if (temp_a0 != NULL) {
+                    temp_a0->unk4 = temp_v0->unk4;
+                }
+                temp_a0 = temp_v0->unk4;
+                if (temp_a0 != NULL) {
+                    temp_a0->unk0 = temp_v0->unk0;
+                }
+                temp_a0 = D_800406A0.unk10;
+                if (temp_a0 != NULL) {
+                    temp_v0->unk0 = temp_a0->unk0;
+                    temp_v0->unk4 = temp_a0;
+                    temp_a1 = temp_a0;
+                    temp_a2 = temp_a0->unk0;
+                    temp_a0 = NULL;
+                    if (temp_a2 != NULL) {
+                        temp_a2->unk4 = temp_v0;
+                    }
+                    temp_a1->unk0 = temp_v0;
+                inserted:
+                    ;
+                } else {
+                    D_800406A0.unk10 = temp_v0;
+                    temp_v0->unk0 = NULL;
+                    temp_v0->unk4 = NULL;
+                }
+            }
+        } while ((temp_v0 = temp_v1) != NULL);
+    }
+}
+
