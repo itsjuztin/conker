@@ -546,10 +546,10 @@ typedef struct {
     s32 unk10;  // used
     s32 unk14;
     s32 unk18;
-    s32 unk1C;  // used
+    u32 unk1C;  // used
     s32 unk20;  // used
     s32 unk24;
-    s32 unk28;  // used
+    u32 unk28;  // used
     s32 unk2C;  // used
     s32 unk30;  // used
     s32 unk34;  // used
@@ -567,8 +567,11 @@ typedef struct {
     s32 unk64;  // used
     s32 unk68;  // used
     s32 unk6C;  // used
-    s32 unk70;  // used
-} struct50;
+    s16 unk70;  // used
+    s16 unk72;
+    void *unk74;
+    s32 pad78[6];
+} struct50; // size 0x90
 
 typedef struct {
     s32 unk0;

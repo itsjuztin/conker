@@ -280,9 +280,9 @@ extern u8   D_800406B8;
 extern u32  D_80040AC8;  // 1200 byte struct?
 extern struct147 D_80040F78;
 extern u8   D_80040F84;
-extern s32  D_80040F88;
-extern s32  D_80040F8C;
-extern s32  D_80040F90;
+extern u32  D_80040F88;
+extern u32  D_80040F8C;
+extern u32  D_80040F90;
 extern struct146 D_80040F98[];
 extern u8   D_80041F00;
 extern s32  D_80041F04;
