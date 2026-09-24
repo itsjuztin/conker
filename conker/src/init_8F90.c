@@ -414,45 +414,52 @@ void func_10009B90(struct54 *arg0) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/init_8F90/func_10009BE4.s")
-// void func_10009BE4(struct00 *arg0) {
-//     struct00 *temp_a1;
-//     struct00 *temp_v0;
-//     struct00 *temp_v1;
-//
-//     if (((s32)arg0 & 1) != 0) {
-//         D_8003C8E0 = 0x0F000004;
-//         func_150AD770(); // 0x80040000
-//         return;
-//     }
-//     arg0->unkC = (s32) arg0->unk8;
-//     if ((s32)arg0 == D_800406A0.unk4) {
-//         D_800406A4 = (struct54 *) arg0->unk0;
-//     }
-//     temp_v0 = arg0->unk0;
-//     if (temp_v0 != 0) {
-//         temp_v0->unk4 = (struct54 *) arg0->unk4;
-//     }
-//     temp_v0 = arg0->unk4;
-//     if (temp_v0 != 0) {
-//         temp_v0 = (struct54 *) arg0->unk0;
-//     }
-//     temp_v1 = D_800406A0.unk10;
-//     if (temp_v1 != 0) {
-//         arg0->unk4 = temp_v1;
-//         arg0->unk0 = (struct54 *) &temp_v1;
-//         temp_a1 = &temp_v1;
-//         if (temp_a1 != 0) {
-//             temp_a1->unk4 = arg0;
-//         }
-//         temp_v1 = arg0;
-//         return;
-//     }
-//     D_800406B0 = arg0;
-//     arg0->unk0 = NULL;
-//     arg0->unk4 = NULL;
-//     // return temp_v0;
-// }
+void func_10009BE4(struct54 *arg0) {
+    struct54 *temp_v0;
+    struct54 *temp_v1;
+    struct54 *temp_a1;
+    s32 new_var5;
+
+    new_var5 = ((u32)arg0) & 1;
+    if (new_var5 != 0) {
+        D_8003C8E0 = 0x0F000004;
+        func_150AD770();
+        return;
+    }
+    if (((!(&D_800406A0)->unk4) && (!(&D_800406A0)->unk4)) && (!(&D_800406A0)->unk4)) {
+    }
+    temp_v0 = (struct54 *)arg0->unkC;
+    temp_v0->unk0 = (struct54 *)arg0->unk8;
+    if (arg0 == ((struct54 *)(&D_800406A0)->unk4)) {
+        D_800406A4 = arg0->unk0;
+    }
+    temp_v0 = arg0->unk0;
+    if (temp_v0 != NULL) {
+        temp_v0->unk4 = arg0->unk4;
+    }
+    temp_v0 = arg0->unk4;
+    if (temp_v0 != NULL) {
+        temp_v0->unk0 = arg0->unk0;
+    }
+    temp_v1 = (&D_800406A0)->unk10;
+    if (temp_v1 != NULL) {
+        arg0->unk0 = temp_v1->unk0;
+        arg0->unk4 = temp_v1;
+        temp_v0 = temp_v1;
+        temp_a1 = temp_v1->unk0;
+        temp_v1 = NULL;
+        if (temp_a1 != NULL) {
+            temp_a1->unk4 = arg0;
+        }
+        temp_v0->unk0 = arg0;
+    inserted:
+        ;
+    } else {
+        D_800406B0 = arg0;
+        arg0->unk0 = NULL;
+        arg0->unk4 = NULL;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/init_8F90/func_10009CBC.s")
 

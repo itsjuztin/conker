@@ -1,17 +1,17 @@
 {
-  "date": 1789775761,
-  "hash": "98bbf755afdb7ea133e84cf1312caed50187c8a1",
+  "date": 1790215926,
+  "hash": "d6ea217770a8323240b8f81a0858ee2964e8355e",
   "progress": [
     {
       "version": "us",
       "sections": [
         {
           "section": "init",
-          "c": 89132,
+          "c": 89348,
           "total": 164048,
-          "c_functions": 375,
+          "c_functions": 376,
           "total_functions": 592,
-          "percent": 54.3329
+          "percent": 54.4645
         },
         {
           "section": "game",
@@ -31,11 +31,11 @@
         },
         {
           "section": "all",
-          "c": 901248,
+          "c": 901464,
           "total": 2256728,
-          "c_functions": 6177,
+          "c_functions": 6178,
           "total_functions": 8037,
-          "percent": 39.936
+          "percent": 39.9456
         }
       ]
     }
