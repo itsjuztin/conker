@@ -7,11 +7,11 @@
       "sections": [
         {
           "section": "init",
-          "c": 89348,
+          "c": 89576,
           "total": 164048,
-          "c_functions": 376,
+          "c_functions": 377,
           "total_functions": 592,
-          "percent": 54.4645
+          "percent": 54.6035
         },
         {
           "section": "game",
@@ -31,11 +31,11 @@
         },
         {
           "section": "all",
-          "c": 901464,
+          "c": 901692,
           "total": 2256728,
-          "c_functions": 6178,
+          "c_functions": 6179,
           "total_functions": 8037,
-          "percent": 39.9456
+          "percent": 39.9557
         }
       ]
     }
